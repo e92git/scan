@@ -1,10 +1,14 @@
 package main
 
 import (
-    "fmt"
-    "rsc.io/quote"
-    "net/http"
-    "github.com/gin-gonic/gin"
+	"example/hello/app/apiserver"
+	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/BurntSushi/toml"
+	"github.com/gin-gonic/gin"
+	"rsc.io/quote"
 )
 
 // http://localhost:5555/scan?place=pokrovka&plate={plate}&datetime={datetime}&direction={direction}&image={image}
@@ -12,7 +16,7 @@ import (
 type scan struct {
     ID              int64  `json:"id,omitempty"`
     LocationId      int64  `json:"location_id"`
-    Plate           string  `json:"plate"`
+    Plate           string `json:"plate"`
     VinId           int64  `json:"vin_id,omitempty"`
     ScannedAt       string `json:"scanned_at"`
     CreatedAt       string `json:"created_at"`
@@ -34,8 +38,15 @@ var albums = []album{
 }
 
 func main() {
-    fmt.Println(quote.Go())
 	fmt.Println(quote.Hello())
+
+    config := apiserver.NewConfig()
+	_, err := toml.DecodeFile(".env", config)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(config.ApiKey)
 
     router := gin.Default()
     router.GET("/scan", addScan)
@@ -47,6 +58,9 @@ func main() {
 }
 
 func addScan(c *gin.Context) {
+
+    // ! вызвать Сервис и передать в него структуру (состоит из c, store пока )
+
     var newScan scan
 
     newScan.Plate = c.Query("plate")
