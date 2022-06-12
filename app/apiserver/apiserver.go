@@ -19,8 +19,8 @@ import (
 // 	// return http.ListenAndServe(config.BindAddr, srv)
 // }
 
-func newDB(dbURL string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", dbURL)
+func ConnectDb(dbURL string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", "gen_user:0fgxqh8bc@85.193.83.246:3306/default_db")
 	if err != nil {
 		return nil, err
 	}

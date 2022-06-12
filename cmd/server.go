@@ -2,6 +2,7 @@ package main
 
 import (
 	"example/hello/app/apiserver"
+	"example/hello/app/store"
 	"fmt"
 	"log"
 	"net/http"
@@ -37,6 +38,11 @@ var albums = []album{
     {ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
 }
 
+type server struct {
+	router       *gin.Engine
+	store        *store.Store
+}
+
 func main() {
 	fmt.Println(quote.Hello())
 
@@ -48,16 +54,25 @@ func main() {
 
 	fmt.Println(config.ApiKey)
 
-    router := gin.Default()
-    router.GET("/scan", addScan)
-    router.GET("/albums", getAlbums)
-    router.GET("/albums/:id", getAlbumByID)
-    router.POST("/albums", postAlbums)
+    db, err := apiserver.ConnectDb(config.DatabaseURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+    
+    s := &server{
+		router:       gin.Default(),
+		store:        store.New(db),
+	}
 
-    router.Run("localhost:5555")
+    s.router.GET("/scan", s.addScan)
+    s.router.GET("/albums", getAlbums)
+    s.router.GET("/albums/:id", getAlbumByID)
+    s.router.POST("/albums", postAlbums)
+
+    s.router.Run("localhost:5555")
 }
 
-func addScan(c *gin.Context) {
+func  (s *server) addScan(c *gin.Context) {
 
     // ! вызвать Сервис и передать в него структуру (состоит из c, store пока )
 

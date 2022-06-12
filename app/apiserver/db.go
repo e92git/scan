@@ -1,35 +1,27 @@
-package apiserver
+// package apiserver
 
-import (
-    "database/sql"
-    "fmt"
-    "log"
-    "os"
+// import (
+//     "database/sql"
+//     "fmt"
+//     "log"
+// )
 
-    "github.com/go-sql-driver/mysql"
-)
+// var db *sql.DB
 
-var db *sql.DB
+// func connectDb() *sql.DB {
 
-func connectDb() {
-    // Capture connection properties.
-    cfg := mysql.Config{
-        User:   os.Getenv("DBUSER"),
-        Passwd: os.Getenv("DBPASS"),
-        Net:    "tcp",
-        Addr:   "127.0.0.1:3306",
-        DBName: "recordings",
-    }
-    // Get a database handle.
-    var err error
-    db, err = sql.Open("mysql", cfg.FormatDSN())
-    if err != nil {
-        log.Fatal(err)
-    }
+//     // Get a database handle.
+//     var err error
+//     db, err = sql.Open("mysql", "gen_user:0fgxqh8bc@85.193.83.246:3306/default_db")
+//     if err != nil {
+//         log.Fatal(err)
+//     }
 
-    pingErr := db.Ping()
-    if pingErr != nil {
-        log.Fatal(pingErr)
-    }
-    fmt.Println("Connected!")
-}
+//     pingErr := db.Ping()
+//     if pingErr != nil {
+//         log.Fatal(pingErr)
+//     }
+//     fmt.Println("Connected!")	
+
+// 	return db
+// }
