@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 func (s *Server) AddScan(c *gin.Context) {
 
 	var newScan model.Scan

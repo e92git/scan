@@ -46,16 +46,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-    store := store.New(db)
+	store := store.New(db)
 
 	s := controller.Server{
 		Router: gin.Default(),
-        Service: &service.Server{
-            Store: store,
-        },
+		Service: &service.Server{
+			Store: store,
+		},
 	}
-
-	/// Папку сервис переименовать в контроллер (бд и джейсон) и добавить папку сервис (только бд)
 
 	s.Router.GET("/scan", s.AddScan)
 	s.Router.GET("/albums", getAlbums)

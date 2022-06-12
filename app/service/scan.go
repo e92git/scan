@@ -5,8 +5,8 @@ import (
 	"fmt"
 )
 
-
 func (s *Server) AddScan(c model.Scan) {
 
 	fmt.Println(c)
+
 }

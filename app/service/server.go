@@ -5,5 +5,5 @@ import (
 )
 
 type Server struct {
-	Store  *store.Store
+	Store *store.Store
 }
