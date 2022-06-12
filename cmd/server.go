@@ -2,6 +2,7 @@ package main
 
 import (
 	"example/hello/app/apiserver"
+	"example/hello/app/service"
 	"example/hello/app/store"
 	"fmt"
 	"log"
@@ -14,14 +15,6 @@ import (
 
 // http://localhost:5555/scan?place=pokrovka&plate={plate}&datetime={datetime}&direction={direction}&image={image}
 
-type scan struct {
-    ID              int64  `json:"id,omitempty"`
-    LocationId      int64  `json:"location_id"`
-    Plate           string `json:"plate"`
-    VinId           int64  `json:"vin_id,omitempty"`
-    ScannedAt       string `json:"scanned_at"`
-    CreatedAt       string `json:"created_at"`
-}
 
 // album represents data about a record album.
 type album struct {
@@ -36,11 +29,6 @@ var albums = []album{
     {ID: "1", Title: "Blue Train", Artist: "John Coltrane", Price: 56.99},
     {ID: "2", Title: "Jeru", Artist: "Gerry Mulligan", Price: 17.99},
     {ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
-}
-
-type server struct {
-	router       *gin.Engine
-	store        *store.Store
 }
 
 func main() {
@@ -59,32 +47,18 @@ func main() {
 		log.Fatal(err)
 	}
     
-    s := &server{
-		router:       gin.Default(),
-		store:        store.New(db),
+    s := service.Server{
+		Router:       gin.Default(),
+		Store:        store.New(db),
 	}
 
-    s.router.GET("/scan", s.addScan)
-    s.router.GET("/albums", getAlbums)
-    s.router.GET("/albums/:id", getAlbumByID)
-    s.router.POST("/albums", postAlbums)
+    s.Router.GET("/scan", s.AddScan)
+    s.Router.GET("/albums", getAlbums)
+    s.Router.GET("/albums/:id", getAlbumByID)
+    s.Router.POST("/albums", postAlbums)
 
-    s.router.Run("localhost:5555")
+    s.Router.Run("localhost:5555")
 }
-
-func  (s *server) addScan(c *gin.Context) {
-
-    // ! вызвать Сервис и передать в него структуру (состоит из c, store пока )
-
-    var newScan scan
-
-    newScan.Plate = c.Query("plate")
-
-    fmt.Println(newScan)
-
-    c.IndentedJSON(http.StatusCreated, newScan)
-}
-
 
 
 // getAlbums responds with the list of all albums as JSON.
