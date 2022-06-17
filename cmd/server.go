@@ -1,13 +1,13 @@
 package main
 
 import (
-	"example/hello/app/apiserver"
-	"example/hello/app/controller"
-	"example/hello/app/service"
-	"example/hello/app/store"
 	"fmt"
 	"log"
 	"net/http"
+	"scan/app/apiserver"
+	"scan/app/controller"
+	"scan/app/service"
+	"scan/app/store"
 
 	"github.com/BurntSushi/toml"
 	"github.com/gin-gonic/gin"
@@ -56,11 +56,12 @@ func main() {
 	}
 
 	s.Router.GET("/scan", s.AddScan)
+	s.Router.GET("/locations", s.GetLocations)
 	s.Router.GET("/albums", getAlbums)
 	s.Router.GET("/albums/:id", getAlbumByID)
 	s.Router.POST("/albums", postAlbums)
 
-	s.Router.Run("localhost:5555")
+	s.Router.Run(config.BindAddr)
 }
 
 // getAlbums responds with the list of all albums as JSON.

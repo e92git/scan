@@ -1,0 +1,25 @@
+// https://data.av100.ru/number2vin.ashx?key=308aa8db-a20d-4357-9d46-0563d73222b1&gosnomer=%D1%81343%D1%80%D0%B2124
+{
+    "start": "14.06.2022 06:06:01",
+    "end": "14.06.2022 06:06:01",
+    "gosnomer": "с343рв124",
+    "error": false,
+    "result": {
+        "gosnomer": "С343РВ124",
+        "vin": ""
+    }
+}
+// https://data.av100.ru/api.ashx?key=308aa8db-a20d-4357-9d46-0563d73222b1&gosnomer=%D1%81343%D1%80%D0%B2124
+{
+    "start": "14.06.2022 06:06:08",
+    "end": "14.06.2022 06:06:08",
+    "gosnomer": "с343рв124",
+    "error": false,
+    "result": {
+        "gibdd": [],
+        "fines": [],
+        "autonumber": [],
+        "offer": [],
+        "eaisto": []
+    }
+}

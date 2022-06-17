@@ -1,0 +1,25 @@
+// https://data.av100.ru/number2vin.ashx?key=308aa8db-a20d-4357-9d46-0563d73222b1&gosnomer=%D0%9C306%D0%A0%D0%A0124
+{
+    "start": "14.06.2022 06:02:14",
+    "end": "14.06.2022 06:02:14",
+    "gosnomer": "М306РР124",
+    "error": false,
+    "result": {
+        "gosnomer": "М306РР124",
+        "vin": ""
+    }
+}
+// https://data.av100.ru/api.ashx?key=308aa8db-a20d-4357-9d46-0563d73222b1&gosnomer=%D0%9C306%D0%A0%D0%A0124
+{
+    "start": "14.06.2022 06:04:02",
+    "end": "14.06.2022 06:04:02",
+    "gosnomer": "М306РР124",
+    "error": false,
+    "result": {
+        "gibdd": [],
+        "fines": [],
+        "autonumber": [],
+        "offer": [],
+        "eaisto": []
+    }
+}

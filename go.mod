@@ -1,4 +1,4 @@
-module example/hello
+module scan
 
 go 1.18
 

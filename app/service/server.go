@@ -1,7 +1,7 @@
 package service
 
 import (
-	"example/hello/app/store"
+	"scan/app/store"
 )
 
 type Server struct {

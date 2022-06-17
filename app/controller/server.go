@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"example/hello/app/service"
+	"scan/app/service"
 
 	"github.com/gin-gonic/gin"
 )

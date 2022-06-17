@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"example/hello/app/model"
 	"fmt"
 	"net/http"
+	"scan/app/model"
 
 	"github.com/gin-gonic/gin"
 )

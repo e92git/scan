@@ -2,7 +2,7 @@ package store
 
 import (
 	"database/sql"
-	"example/hello/app/model"
+	"scan/app/model"
 )
 
 // UserRepository ...

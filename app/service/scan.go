@@ -1,8 +1,8 @@
 package service
 
 import (
-	"example/hello/app/model"
 	"fmt"
+	"scan/app/model"
 )
 
 func (s *Server) AddScan(c model.Scan) {
