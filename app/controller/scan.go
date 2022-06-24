@@ -8,13 +8,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *Server) AddScan(c *gin.Context) {
+func (s *Config) AddScan(c *gin.Context) {
 
 	var newScan model.Scan
 
 	newScan.Plate = c.Query("plate")
 
-	s.Service.AddScan(newScan)
+	// s.Service.AddScan(newScan)
 
 	fmt.Println(newScan)
 

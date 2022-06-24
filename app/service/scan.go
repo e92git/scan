@@ -5,7 +5,7 @@ import (
 	"scan/app/model"
 )
 
-func (s *Server) AddScan(c model.Scan) {
+func (s *Config) AddScan(c model.Scan) {
 
 	fmt.Println(c)
 

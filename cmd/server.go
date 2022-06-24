@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"scan/app/apiserver"
 	"scan/app/controller"
-	"scan/app/service"
-	"scan/app/store"
 
 	"github.com/BurntSushi/toml"
 	"github.com/gin-gonic/gin"
@@ -46,22 +44,20 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	store := store.New(db)
 
-	s := controller.Server{
+	c := &controller.Config{
 		Router: gin.Default(),
-		Service: &service.Server{
-			Store: store,
-		},
+		Db:     db,
+		Config: config,
 	}
 
-	s.Router.GET("/scan", s.AddScan)
-	s.Router.GET("/locations", s.GetLocations)
-	s.Router.GET("/albums", getAlbums)
-	s.Router.GET("/albums/:id", getAlbumByID)
-	s.Router.POST("/albums", postAlbums)
+	c.Router.GET("/scan", c.AddScan)
+	c.Router.GET("/locations", c.GetLocations)
+	c.Router.GET("/albums", getAlbums)
+	c.Router.GET("/albums/:id", getAlbumByID)
+	c.Router.POST("/albums", postAlbums)
 
-	s.Router.Run(config.BindAddr)
+	c.Router.Run(config.BindAddr)
 }
 
 // getAlbums responds with the list of all albums as JSON.
