@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"scan/app/apiserver"
 	"scan/app/controller"
 
-	"github.com/BurntSushi/toml"
 	"github.com/gin-gonic/gin"
 	"rsc.io/quote"
 )
@@ -32,23 +30,9 @@ var albums = []album{
 func main() {
 	fmt.Println(quote.Hello())
 
-	config := apiserver.NewConfig()
-	_, err := toml.DecodeFile(".env", config)
+	c, err := controller.New()
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	fmt.Println(config.ApiKey)
-
-	db, err := apiserver.ConnectDb(config.DatabaseURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	c := &controller.Config{
-		Router: gin.Default(),
-		Db:     db,
-		Config: config,
 	}
 
 	c.Router.GET("/scan", c.AddScan)
@@ -57,7 +41,10 @@ func main() {
 	c.Router.GET("/albums/:id", getAlbumByID)
 	c.Router.POST("/albums", postAlbums)
 
-	c.Router.Run(config.BindAddr)
+	err = c.RunServer()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // getAlbums responds with the list of all albums as JSON.

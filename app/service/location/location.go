@@ -9,5 +9,6 @@ func (c *Config) All() ([]model.Location, error) {
 	if err != nil {
 		return nil, err
 	}
+	
 	return locations, nil
 }

@@ -2,7 +2,6 @@ package controller
 
 import (
 	"database/sql"
-	"fmt"
 	"scan/app/apiserver"
 	"scan/app/service"
 
@@ -10,22 +9,33 @@ import (
 )
 
 type Config struct {
-	Router  *gin.Engine
-	Db      *sql.DB
 	Config  *apiserver.Config
-	service *service.Config
+	Db      *sql.DB
+	Router  *gin.Engine
+	Service *service.Config
 }
 
-func (c *Config) Service() *service.Config {
-	if c.service != nil {
-		return c.service
+func New() (*Config, error) {
+	config, err := apiserver.LoadConfig()
+	if err != nil {
+		return nil, err
 	}
 
-	fmt.Println("Import Service!")
-
-	c.service = &service.Config{
-		Db: c.Db,
+	db, err := apiserver.ConnectDb(config.DatabaseURL)
+	if err != nil {
+		return nil, err
 	}
 
-	return c.service
+	c := &Config{
+		Config:  config,
+		Db:      db,
+		Router:  gin.Default(),
+		Service: service.New(db),
+	}
+
+	return c, nil
+}
+
+func (c *Config) RunServer() error {
+	return c.Router.Run(c.Config.BindAddr)
 }

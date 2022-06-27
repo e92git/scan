@@ -7,10 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *Config) GetLocations(c *gin.Context) {
-	locations, err := s.Service().Location().All()
+func (c *Config) GetLocations(g *gin.Context) {
+	locations, err := c.Service.Location().All()
 	if err != nil {
 		fmt.Println(err)
 	}
-	c.IndentedJSON(http.StatusOK, locations)
+	g.IndentedJSON(http.StatusOK, locations)
 }

@@ -8,15 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *Config) AddScan(c *gin.Context) {
+func (c *Config) AddScan(g *gin.Context) {
 
 	var newScan model.Scan
 
-	newScan.Plate = c.Query("plate")
+	newScan.Plate = g.Query("plate")
 
 	// s.Service.AddScan(newScan)
 
 	fmt.Println(newScan)
 
-	c.IndentedJSON(http.StatusCreated, newScan)
+	g.IndentedJSON(http.StatusCreated, newScan)
 }

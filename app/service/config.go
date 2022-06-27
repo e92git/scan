@@ -6,14 +6,20 @@ import (
 )
 
 type Config struct {
-	Db 		 *sql.DB
+	db 		 *sql.DB
 	location *locationService.Config
 }
 
-func (c *Config) Location() *locationService.Config {
-	if c.location != nil {
-		return c.location
+func New(db *sql.DB) *Config {
+	return &Config{
+		db: db,
 	}
-	c.location = locationService.New(c.Db)
+}
+
+func (c *Config) Location() *locationService.Config {
+	if c.location == nil {
+		c.location = locationService.New(c.db)
+	}
+	
 	return c.location
 }

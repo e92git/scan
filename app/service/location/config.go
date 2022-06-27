@@ -18,15 +18,10 @@ func New(db *sql.DB) *Config {
 }
 
 func (c *Config) LocationRepository() (*repository.Location) {
-	if c.locationRepository != nil {
-		return c.locationRepository
+	if c.locationRepository == nil {
+		fmt.Println("Import LocationRepository!")
+		c.locationRepository = repository.New(c.db)
 	}
-
-	fmt.Println("Import LocationRepository!")
-
-	c.locationRepository = &repository.Location{
-		Db: c.db,
-	}
-
+	
 	return c.locationRepository
 } 

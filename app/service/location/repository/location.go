@@ -6,11 +6,17 @@ import (
 )
 
 type Location struct {
-	Db *sql.DB
+	db *sql.DB
+}
+
+func New(db *sql.DB) *Location {
+	return &Location{
+		db: db,
+	}
 }
 
 func (r *Location) All() ([]model.Location, error) {
-    rows, err := r.Db.Query("SELECT id, name, code FROM location WHERE 0")
+    rows, err := r.db.Query("SELECT id, name, code FROM location")
     if err != nil {
 		return nil, err
 	}
