@@ -2,6 +2,7 @@ package service
 
 import (
 	"database/sql"
+	"fmt"
 	"scan/app/service/location"
 )
 
@@ -18,6 +19,7 @@ func New(db *sql.DB) *Config {
 
 func (c *Config) Location() *locationService.Config {
 	if c.location == nil {
+		fmt.Println("Import locationService!")
 		c.location = locationService.New(c.db)
 	}
 	

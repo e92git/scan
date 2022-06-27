@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"database/sql"
 	"scan/app/apiserver"
 	"scan/app/service"
 
@@ -9,10 +8,9 @@ import (
 )
 
 type Config struct {
-	Config  *apiserver.Config
-	Db      *sql.DB
+	config  *apiserver.Config
 	Router  *gin.Engine
-	Service *service.Config
+	service *service.Config
 }
 
 func New() (*Config, error) {
@@ -27,15 +25,14 @@ func New() (*Config, error) {
 	}
 
 	c := &Config{
-		Config:  config,
-		Db:      db,
+		config:  config,
 		Router:  gin.Default(),
-		Service: service.New(db),
+		service: service.New(db),
 	}
 
 	return c, nil
 }
 
 func (c *Config) RunServer() error {
-	return c.Router.Run(c.Config.BindAddr)
+	return c.Router.Run(c.config.BindAddr)
 }

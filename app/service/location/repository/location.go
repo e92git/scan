@@ -5,24 +5,24 @@ import (
 	"scan/app/service/location/model"
 )
 
-type Location struct {
+type Config struct {
 	db *sql.DB
 }
 
-func New(db *sql.DB) *Location {
-	return &Location{
+func New(db *sql.DB) *Config {
+	return &Config{
 		db: db,
 	}
 }
 
-func (r *Location) All() ([]model.Location, error) {
-    rows, err := r.db.Query("SELECT id, name, code FROM location")
-    if err != nil {
+func (r *Config) All() ([]model.Location, error) {
+	rows, err := r.db.Query("SELECT id, name, code FROM location")
+	if err != nil {
 		return nil, err
 	}
-    defer rows.Close()
+	defer rows.Close()
 
-    var locations []model.Location
+	var locations []model.Location
 
 	for rows.Next() {
 		var loc model.Location
