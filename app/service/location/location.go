@@ -5,7 +5,7 @@ import (
 )
 
 func (c *Config) All() ([]model.Location, error) {
-	locations, err := c.locationRepository.All()
+	locations, err := c.repository.All()
 	if err != nil {
 		return nil, err
 	}

@@ -31,7 +31,7 @@ type UserRepository struct {
 func (r *UserRepository) Find(id int) (*model.User, error) {
 	u := &model.User{}
 	if err := r.store.db.QueryRow(
-		"SELECT id, email, encrypted_password FROM users WHERE id = $1",
+		"SELECT id, email, encrypted_password FROM users WHERE id = ?",
 		id,
 	).Scan(
 		&u.ID,

@@ -1,16 +1,17 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
+
 func (c *Config) GetLocations(g *gin.Context) {
-	locations, err := c.service.Location().All()
+	locations, err := c.store.Location().All()
 	if err != nil {
-		fmt.Println(err)
+		c.error(g, err)
+		return
 	}
 	g.IndentedJSON(http.StatusOK, locations)
 }

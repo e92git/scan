@@ -1,22 +1,28 @@
 package controller
 
 import (
-	"fmt"
-	"net/http"
 	"scan/app/model"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (c *Config) AddScan(g *gin.Context) {
+	loc, err := c.store.Location().FindByCode(g.Query("place"))
+	if err != nil {
+		c.error(g, err)
+		return
+	}
 
-	var newScan model.Scan
+	newScan := &model.Scan{
+		LocationId: loc.Id,
+		Plate: g.Query("plate"),
+		ScannedAt: g.Query("datetime"),
+	}
 
-	newScan.Plate = g.Query("plate")
+	if err := c.store.Scan().Create(newScan); err != nil {
+		c.error(g, err)
+		return
+	}
 
-	// s.Service.AddScan(newScan)
-
-	fmt.Println(newScan)
-
-	g.IndentedJSON(http.StatusCreated, newScan)
+	c.respond(g, newScan)
 }

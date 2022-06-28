@@ -4,11 +4,13 @@ import (
 	"database/sql"
 	"fmt"
 	"scan/app/service/location"
+	"scan/app/service/scan"
 )
 
 type Config struct {
 	db 		 *sql.DB
 	location *locationService.Config
+	scan 	 *scanService.Config
 }
 
 func New(db *sql.DB) *Config {
@@ -24,4 +26,12 @@ func (c *Config) Location() *locationService.Config {
 	}
 	
 	return c.location
+}
+
+func (c *Config) Scan() *scanService.Config {
+	if c.scan == nil {
+		c.scan = scanService.New(c.db)
+	}
+	
+	return c.scan
 }

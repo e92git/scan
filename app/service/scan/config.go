@@ -1,12 +1,12 @@
-package locationService
+package scanService
 
 import (
 	"database/sql"
-	"scan/app/service/location/repository"
+	"scan/app/service/scan/repository"
 )
 
 type Config struct {
-	db         *sql.DB
+	db                 *sql.DB
 	repository *repository.Config
 }
 

@@ -1,8 +1,11 @@
 package controller
 
 import (
+	"log"
+	"net/http"
 	"scan/app/apiserver"
 	"scan/app/service"
+	"scan/app/store"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,6 +13,7 @@ import (
 type Config struct {
 	config  *apiserver.Config
 	Router  *gin.Engine
+	store   *store.Store
 	service *service.Config
 }
 
@@ -27,6 +31,7 @@ func New() (*Config, error) {
 	c := &Config{
 		config:  config,
 		Router:  gin.Default(),
+		store:   store.New(db),
 		service: service.New(db),
 	}
 
@@ -35,4 +40,15 @@ func New() (*Config, error) {
 
 func (c *Config) RunServer() error {
 	return c.Router.Run(c.config.BindAddr)
+}
+
+func (c *Config) error(g *gin.Context, err error) {
+	log.Print(err)
+	g.JSON(http.StatusBadRequest, gin.H{
+		"error": err.Error(),
+	})
+}
+
+func (c *Config) respond(g *gin.Context, obj any) {
+	g.IndentedJSON(http.StatusOK, obj)
 }
