@@ -1,28 +1,28 @@
 package service
 
 import (
-	"database/sql"
 	"fmt"
 	"scan/app/service/location"
 	"scan/app/service/scan"
+	"scan/app/store"
 )
 
 type Config struct {
-	db 		 *sql.DB
+	store 	 *store.Store
 	location *locationService.Config
 	scan 	 *scanService.Config
 }
 
-func New(db *sql.DB) *Config {
+func New(store *store.Store) *Config {
 	return &Config{
-		db: db,
+		store: store,
 	}
 }
 
 func (c *Config) Location() *locationService.Config {
 	if c.location == nil {
 		fmt.Println("Import locationService!")
-		c.location = locationService.New(c.db)
+		c.location = locationService.New(c.store)
 	}
 	
 	return c.location
@@ -30,7 +30,7 @@ func (c *Config) Location() *locationService.Config {
 
 func (c *Config) Scan() *scanService.Config {
 	if c.scan == nil {
-		c.scan = scanService.New(c.db)
+		c.scan = scanService.New(c.store)
 	}
 	
 	return c.scan

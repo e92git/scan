@@ -1,18 +1,19 @@
 package scanService
 
 import (
-	"database/sql"
-	"scan/app/service/scan/repository"
+	// "database/sql"
+	// "scan/app/service/scan/repository"
+	"scan/app/store"
 )
 
 type Config struct {
-	db                 *sql.DB
-	repository *repository.Config
+	store 	 *store.Store
+	// repository *repository.Config
 }
 
-func New(db *sql.DB) *Config {
+func New(store *store.Store) *Config {
 	return &Config{
-		db:         db,
-		repository: repository.New(db),
+		store: store,
+		// repository: repository.New(store),
 	}
 }

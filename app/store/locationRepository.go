@@ -1,7 +1,6 @@
 package store
 
 import (
-	"database/sql"
 	"scan/app/model"
 )
 
@@ -33,20 +32,17 @@ func (r *LocationRepository) All() ([]model.Location, error) {
 
 // Find ...
 func (r *LocationRepository) FindByCode(code string) (*model.Location, error) {
-	u := &model.Location{}
+	m := &model.Location{}
 	if err := r.store.db.QueryRow(
 		"SELECT id, code, name FROM location WHERE code = ?",
 		code,
 	).Scan(
-		&u.Id,
-		&u.Code,
-		&u.Name,
+		&m.Id,
+		&m.Code,
+		&m.Name,
 	); err != nil {
-		if err == sql.ErrNoRows {
-			return nil, ErrRecordNotFound
-		}
 		return nil, err
 	}
-	return u, nil
+	return m, nil
 }
 

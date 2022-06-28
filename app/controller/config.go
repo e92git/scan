@@ -28,11 +28,13 @@ func New() (*Config, error) {
 		return nil, err
 	}
 
+	store := store.New(db)
+
 	c := &Config{
 		config:  config,
 		Router:  gin.Default(),
-		store:   store.New(db),
-		service: service.New(db),
+		store:   store,
+		service: service.New(store),
 	}
 
 	return c, nil

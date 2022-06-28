@@ -1,14 +1,14 @@
 package locationService
 
-import (
-	"scan/app/service/location/model"
-)
+// import (
+// 	"scan/app/service/location/model"
+// )
 
-func (c *Config) All() ([]model.Location, error) {
-	locations, err := c.repository.All()
-	if err != nil {
-		return nil, err
-	}
+// func (c *Config) All() ([]model.Location, error) {
+// 	// locations, err := c.repository.All()
+// 	// if err != nil {
+// 	// 	return nil, err
+// 	// }
 
-	return locations, nil
-}
+// 	// return locations, nil
+// }
