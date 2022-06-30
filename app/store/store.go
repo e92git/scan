@@ -1,19 +1,19 @@
 package store
 
 import (
-	"database/sql"
+	"gorm.io/gorm"
 )
 
 // Store ...
 type Store struct {
-	db             		*sql.DB
+	db             		*gorm.DB
 	userRepository 		*UserRepository
 	locationRepository  *LocationRepository
 	scanRepository  	*ScanRepository
 }
 
 // New ...
-func New(db *sql.DB) *Store {
+func New(db *gorm.DB) *Store {
 	return &Store{
 		db: db,
 	}

@@ -1,8 +1,8 @@
 package store
 
 import (
-	"database/sql"
-	"scan/app/model"
+	// "database/sql"
+	// "scan/app/model"
 )
 
 // UserRepository ...
@@ -28,22 +28,22 @@ type UserRepository struct {
 // }
 
 // Find ...
-func (r *UserRepository) Find(id int) (*model.User, error) {
-	u := &model.User{}
-	if err := r.store.db.QueryRow(
-		"SELECT id, email, encrypted_password FROM users WHERE id = ?",
-		id,
-	).Scan(
-		&u.ID,
-		&u.Email,
-		&u.EncryptedPassword,
-	); err != nil {
-		if err == sql.ErrNoRows {
-			return nil, ErrRecordNotFound
-		}
+// func (r *UserRepository) Find(id int) (*model.User, error) {
+// 	u := &model.User{}
+// 	if err := r.store.db.QueryRow(
+// 		"SELECT id, email, encrypted_password FROM users WHERE id = ?",
+// 		id,
+// 	).Scan(
+// 		&u.ID,
+// 		&u.Email,
+// 		&u.EncryptedPassword,
+// 	); err != nil {
+// 		if err == sql.ErrNoRows {
+// 			return nil, ErrRecordNotFound
+// 		}
 
-		return nil, err
-	}
+// 		return nil, err
+// 	}
 
-	return u, nil
-}
+// 	return u, nil
+// }

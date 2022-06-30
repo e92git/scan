@@ -1,7 +1,7 @@
 package store
 
 import (
-	"scan/app/model"
+	// "scan/app/model"
 )
 
 type ScanRepository struct {
@@ -9,27 +9,27 @@ type ScanRepository struct {
 }
 
 // Create ...
-func (r *ScanRepository) Create(s *model.Scan) error {
-	if err := s.Validate(); err != nil {
-		return err
-	}
+// func (r *ScanRepository) Create(s *model.Scan) error {
+// 	if err := s.Validate(); err != nil {
+// 		return err
+// 	}
 
-	res, err := r.store.db.Exec(
-		"INSERT INTO scan (location_id, plate, scanned_at) VALUES (?, ?, ?)",
-		s.LocationId,
-		s.Plate,
-		s.ScannedAt,
-	)
-	if err != nil {
-		return err
-	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return err
-	}
-	s.Id = id
-	return nil
-}
+// 	res, err := r.store.db.Exec(
+// 		"INSERT INTO scans (location_id, plate, scanned_at) VALUES (?, ?, ?)",
+// 		s.LocationId,
+// 		s.Plate,
+// 		s.ScannedAt,
+// 	)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	id, err := res.LastInsertId()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	s.ID = id
+// 	return nil
+// }
 
 // func (r *ScanRepository) All() ([]model.Scan, error) {
 // 	rows, err := r.store.db.Query("SELECT id, name, code FROM location")

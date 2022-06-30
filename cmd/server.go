@@ -5,8 +5,11 @@ import (
 	"log"
 	"net/http"
 	"scan/app/controller"
+	_ "scan/docs"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 	"rsc.io/quote"
 )
 
@@ -27,6 +30,22 @@ var albums = []album{
 	{ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
 }
 
+// @title           Swagger Example API
+// @version         1.0
+// @description     This is a sample server celler server.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+// @BasePath  /api/v1
+
+// @securityDefinitions.basic  BasicAuth
 func main() {
 	fmt.Println(quote.Hello())
 
@@ -35,17 +54,43 @@ func main() {
 		log.Fatal(err)
 	}
 
-	c.Router.GET("/scan", c.AddScan)
-	c.Router.GET("/locations", c.GetLocations)
-	c.Router.GET("/albums", getAlbums)
-	c.Router.GET("/albums/:id", getAlbumByID)
-	c.Router.POST("/albums", postAlbums)
+	r := gin.Default()
 
-	err = c.RunServer()
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+
+	v1 := r.Group("/api/v1")
+	{
+		// v1.Use(auth())
+		v1.GET("/locations", c.GetLocations)
+		v1.GET("/scan", c.AddScan)
+		// v1.GET("/users/:id", apis.GetUser)
+	}
+
+	r.GET("/albums", getAlbums)
+	r.GET("/albums/:id", getAlbumByID)
+	r.POST("/albums", postAlbums)
+
+	err = r.Run(c.Addr())
 	if err != nil {
 		log.Fatal(err)
 	}
 }
+
+// func auth() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		authHeader := c.GetHeader("Authorization")
+// 		if len(authHeader) == 0 {
+// 			httputil.NewError(c, http.StatusUnauthorized, errors.New("Authorization is required Header"))
+// 			c.Abort()
+// 		}
+// 		if authHeader != config.Config.ApiKey {
+// 			httputil.NewError(c, http.StatusUnauthorized, fmt.Errorf("this user isn't authorized to this operation: api_key=%s", authHeader))
+// 			c.Abort()
+// 		}
+// 		c.Next()
+// 	}
+// }
 
 // getAlbums responds with the list of all albums as JSON.
 func getAlbums(c *gin.Context) {

@@ -12,7 +12,6 @@ import (
 
 type Config struct {
 	config  *apiserver.Config
-	Router  *gin.Engine
 	store   *store.Store
 	service *service.Config
 }
@@ -23,7 +22,7 @@ func New() (*Config, error) {
 		return nil, err
 	}
 
-	db, err := apiserver.ConnectDb(config.DatabaseURL)
+	db, err := apiserver.ConnectGorm(config.Dsn)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +31,6 @@ func New() (*Config, error) {
 
 	c := &Config{
 		config:  config,
-		Router:  gin.Default(),
 		store:   store,
 		service: service.New(store),
 	}
@@ -40,8 +38,8 @@ func New() (*Config, error) {
 	return c, nil
 }
 
-func (c *Config) RunServer() error {
-	return c.Router.Run(c.config.BindAddr)
+func (c *Config) Addr() string {
+	return c.config.BindAddr
 }
 
 func (c *Config) error(g *gin.Context, err error) {

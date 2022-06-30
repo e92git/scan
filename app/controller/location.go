@@ -8,7 +8,7 @@ import (
 
 
 func (c *Config) GetLocations(g *gin.Context) {
-	locations, err := c.store.Location().All()
+	locations, err := c.service.Location().All()
 	if err != nil {
 		c.error(g, err)
 		return
