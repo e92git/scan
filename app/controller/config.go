@@ -44,7 +44,9 @@ func (c *Config) Addr() string {
 
 func (c *Config) error(g *gin.Context, err error) {
 	log.Print(err)
-	g.JSON(http.StatusBadRequest, gin.H{
+	g.IndentedJSON(http.StatusBadRequest, gin.H{
+		"url": g.Request.URL,
+		"body": g.Request.Body,
 		"error": err.Error(),
 	})
 }

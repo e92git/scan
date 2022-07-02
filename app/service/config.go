@@ -2,14 +2,13 @@ package service
 
 import (
 	"fmt"
-	scanService "scan/app/service/scan"
 	"scan/app/store"
 )
 
 type Config struct {
 	store    *store.Store
 	location *LocationService
-	scan     *scanService.Config
+	scan     *ScanService
 }
 
 func New(store *store.Store) *Config {
@@ -23,14 +22,12 @@ func (c *Config) Location() *LocationService {
 		fmt.Println("Import locationService!")
 		c.location = NewLocation(c.store)
 	}
-
 	return c.location
 }
 
-func (c *Config) Scan() *scanService.Config {
+func (c *Config) Scan() *ScanService {
 	if c.scan == nil {
-		c.scan = scanService.New(c.store)
+		c.scan = NewScan(c.store)
 	}
-
 	return c.scan
 }

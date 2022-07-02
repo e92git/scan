@@ -7,22 +7,15 @@ import (
 )
 
 func (c *Config) AddScan(g *gin.Context) {
-	// loc, err := c.store.Location().FindByCode(g.Query("place"))
-	// if err != nil {
-	// 	c.error(g, err)
-	// 	return
-	// }
-
-	// newScan := &model.Scan{
-	// 	LocationId: loc.ID,
-	// 	Plate:      g.Query("plate"),
-	// 	ScannedAt:  g.Query("datetime"),
-	// }
-
-	// if err := c.store.Scan().Create(newScan); err != nil {
-	// 	c.error(g, err)
-	// 	return
-	// }
-
-	// c.respond(g, newScan)
+	newScan, err := c.service.Scan().FirstOrCreate(
+		g.Query("place"),
+		g.Query("plate"),
+		g.Query("datetime"),
+	)
+	if err != nil {
+		c.error(g, err)
+		return
+	}
+	
+	c.respond(g, newScan)
 }

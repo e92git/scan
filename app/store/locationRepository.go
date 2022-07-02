@@ -8,27 +8,19 @@ type LocationRepository struct {
 	store *Store
 }
 
+// All ...
 func (r *LocationRepository) All() ([]model.Location, error) {
 	var locations []model.Location
 	res := r.store.db.Find(&locations)
 	return locations, res.Error
 }
 
-// Find ...
-// func (r *LocationRepository) FindByCode(code string) (*model.Location, error) {
-// 	m := &model.Location{}
-// 	if err := r.store.db.QueryRow(
-// 		"SELECT id, code, name FROM locations WHERE code = ?",
-// 		code,
-// 	).Scan(
-// 		&m.ID,
-// 		&m.Code,
-// 		&m.Name,
-// 	); err != nil {
-// 		return nil, err
-// 	}
-// 	return m, nil
-// }
+// FindByCode ...
+func (r *LocationRepository) FindByCode(code string) (*model.Location, error) {
+	loc := &model.Location{}
+	res := r.store.db.Where("code = ?", code).First(loc)
+	return loc, res.Error
+}
 
 // func (r *LocationRepository) All() ([]model.Location, error) {
 // 	rows, err := r.store.db.Query("SELECT id, name, code FROM location")

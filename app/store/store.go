@@ -24,11 +24,9 @@ func (s *Store) User() *UserRepository {
 	if s.userRepository != nil {
 		return s.userRepository
 	}
-
 	s.userRepository = &UserRepository{
 		store: s,
 	}
-
 	return s.userRepository
 }
 
@@ -37,23 +35,19 @@ func (s *Store) Location() *LocationRepository {
 	if s.locationRepository != nil {
 		return s.locationRepository
 	}
-
 	s.locationRepository = &LocationRepository{
 		store: s,
 	}
-
 	return s.locationRepository
 }
 
-// Location ...
+// Scan ...
 func (s *Store) Scan() *ScanRepository {
 	if s.scanRepository != nil {
 		return s.scanRepository
 	}
-
 	s.scanRepository = &ScanRepository{
 		store: s,
 	}
-
 	return s.scanRepository
 }
