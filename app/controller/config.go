@@ -22,7 +22,7 @@ func New() (*Config, error) {
 		return nil, err
 	}
 
-	db, err := apiserver.ConnectGorm(config.Dsn)
+	db, err := apiserver.ConnectGorm(config.Dsn, config.LogLevel)
 	if err != nil {
 		return nil, err
 	}

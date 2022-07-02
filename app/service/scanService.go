@@ -3,7 +3,7 @@ package service
 import (
 	"scan/app/model"
 	"scan/app/store"
-	"time"
+	"scan/app/helper"
 )
 
 type ScanService struct {
@@ -22,7 +22,7 @@ func (s *ScanService) FirstOrCreate(locationCode string, plate string, scannedAt
 		return nil, err
 	}
 
-	t, err := time.ParseInLocation("2006-01-02 15:04:05", scannedAt, time.Local)
+	ScannedAtTime, err := helper.StrToTime(scannedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -30,8 +30,12 @@ func (s *ScanService) FirstOrCreate(locationCode string, plate string, scannedAt
 	newScan := &model.Scan{
 		LocationId: l.ID,
 		Plate:      plate,
-		ScannedAt:  t,
+		ScannedAt:  ScannedAtTime,
 	}
 
 	return newScan, s.store.Scan().FirstOrCreate(newScan)
+}
+
+func strToTime(scannedAt string) {
+	panic("unimplemented")
 }
