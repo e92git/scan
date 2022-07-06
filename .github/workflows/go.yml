@@ -11,12 +11,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - run: echo "GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }} ."
     - name: Push to server
       uses: appleboy/ssh-action@master
       with:
          host: 91.210.169.248
          username: root
-         password: ${{secrets.SERVER_PASSWORD}}
+         password: ${{secrets.GITHUB_TOKEN}}
          script: |
           whoami
           ls
