@@ -22,7 +22,6 @@ jobs:
          host: 91.210.169.248
          username: root
          password: sz3eKNWM
-         port: 22
          script: whoami
 
 
