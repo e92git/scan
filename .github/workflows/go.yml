@@ -22,7 +22,9 @@ jobs:
          host: 91.210.169.248
          username: root
          password: sz3eKNWM
-         script: whoami
+         script: |
+          whoami
+          ls
 
 
     # - name: Set up Go
