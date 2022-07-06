@@ -11,13 +11,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
     - name: Push to server
       uses: appleboy/ssh-action@master
       with:
          host: 91.210.169.248
          username: root
-         password: ${{ secrets.SERVER_PASSWORD }}
+         password: ${{secrets.SERVER_PASSWORD}}
          script: |
           whoami
           ls
