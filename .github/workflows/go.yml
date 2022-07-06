@@ -15,7 +15,7 @@ jobs:
         env:
           SUPER_SECRET: ${{ secrets.TT }}
         run: |
-        example-command "$SUPER_SECRET"
+          example-command "$SUPER_SECRET"
       - run: echo "GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }} RR ${{ secrets.RR }} TT ${{ secrets.TT }} ."
       - name: Push to server
         uses: appleboy/ssh-action@master
