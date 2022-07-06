@@ -11,22 +11,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - shell: bash
-        env:
-          SUPER_SECRET: ${{ secrets.TT }}
-        run: |
-          echo "$SUPER_SECRET"
-      - run: echo "GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }} RR ${{ secrets.RR }} TT ${{ secrets.TT }} ."
       - name: Push to server
         uses: appleboy/ssh-action@master
         with:
           host: 91.210.169.248
           username: root
-          password: ${{ secrets.TT }}
+          password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             whoami
             ls
 
+
+
+      # - shell: bash
+      #   env:
+      #     SUPER_SECRET: ${{ secrets.TT }}
+      #   run: |
+      #     echo "$SUPER_SECRET"
+      # - run: echo "GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }} RR ${{ secrets.RR }} TT ${{ secrets.TT }} ."
 
     # - name: Set up Go
     #   uses: actions/setup-go@v3
