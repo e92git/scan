@@ -16,6 +16,10 @@ func NewScan(store *store.Store) *ScanService {
 	}
 }
 
+// func (s *ScanService) CreateBulk(locationCode string, plate string, scannedAt string) (*model.Scan, error) {
+
+// }
+
 func (s *ScanService) FirstOrCreate(locationCode string, plate string, scannedAt string) (*model.Scan, error) {
 	l, err := s.store.Location().FindByCode(locationCode)
 	if err != nil {

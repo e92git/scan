@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
-	"github.com/swaggo/gin-swagger"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"rsc.io/quote"
 )
 
@@ -58,11 +58,11 @@ func main() {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-
 	v1 := r.Group("/api/v1")
 	{
 		// v1.Use(auth())
 		v1.GET("/locations", c.GetLocations)
+		v1.POST("/scan", c.AddScans)
 		v1.GET("/scan", c.AddScan)
 		// v1.GET("/users/:id", apis.GetUser)
 	}
