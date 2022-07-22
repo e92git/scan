@@ -32,7 +32,6 @@ jobs:
             cd scan
             git pull
             go mod tidy
-            swag init -g cmd/main.go
             go build cmd/main.go
             supervisorctl restart scan
 
