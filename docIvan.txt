@@ -33,7 +33,7 @@ supervisorctl stop scan
 -SUPERVISOR Настройка (nano /etc/supervisor/conf.d/scan.conf):
 [program:scan]
 directory=/root/scan
-command=/root/scan/server
+command=/root/scan/main
 autostart=true
 autorestart=true
 stderr_logfile=/var/log/supervisor/scan.err.log
