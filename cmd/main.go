@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"scan/app/controller"
+	_ "scan/docs"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
