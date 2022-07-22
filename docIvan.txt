@@ -1,5 +1,50 @@
-Команды:
+Команды (из корня проекта):
 go mod tidy - обновить зависимости всего проекта
 go get github.com/foo - установить зависимость foo
-go run ./cmd - запустить проект
-go build ./cmd - создать exe файл проекта
+go run cmd/main.go - запустить проект
+go build cmd/main.go - создать exe файл проекта (/main.exe)
+
+-Автодеплой:
+https://github.com/e92git/scan/actions
+https://codesahara.com/blog/how-to-deploy-golang-with-supervisor/
+https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
+
+
+-Мой Github deploy script:
+cd scan
+git pull
+go mod tidy
+go build cmd/main.go
+supervisorctl restart scan
+
+
+-Проверка состояния:
+supervisorctl reload
+supervisorctl status
+supervisorctl restart scan
+supervisorctl stop scan
+
+-Настройка SUPERVISOR (nano /etc/supervisor/conf.d/scan.conf):
+[program:scan]
+directory=/root/scan
+command=/root/scan/server
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/supervisor/scan.err.log
+stdout_logfile=/var/log/supervisor/scan.log
+
+
+
+Файл сервиса запуска /usr/lib/systemd/system/goserver.service:
+[Unit]
+Description=goserver
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5s
+ExecStart=cd /root/scan && ./server
+
+[Install]
+WantedBy=multi-user.target
+
