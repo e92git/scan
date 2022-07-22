@@ -1,8 +1,12 @@
-Команды (из корня проекта):
+
+-Команды (из корня проекта):
 go mod tidy - обновить зависимости всего проекта
 go get github.com/foo - установить зависимость foo
 go run cmd/main.go - запустить проект
 go build cmd/main.go - создать exe файл проекта (/main.exe)
+
+-Swagger обновить:
+swag init -g cmd/main.go
 
 -Автодеплой:
 https://github.com/e92git/scan/actions
@@ -14,17 +18,19 @@ https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-
 cd scan
 git pull
 go mod tidy
+swag init -g cmd/main.go
 go build cmd/main.go
 supervisorctl restart scan
 
+-LOG:
+/var/log/supervisor/scan.log - лог работы main.go
 
--Проверка состояния:
-supervisorctl reload
+-SUPERVISOR Проверка состояния:
+supervisorctl reload - при запускать после редактирования supervisor/../scan.conf на сервере!
 supervisorctl status
-supervisorctl restart scan
+supervisorctl restart scan - при запускать после редактирования .env на сервере!
 supervisorctl stop scan
-
--Настройка SUPERVISOR (nano /etc/supervisor/conf.d/scan.conf):
+-SUPERVISOR Настройка (nano /etc/supervisor/conf.d/scan.conf):
 [program:scan]
 directory=/root/scan
 command=/root/scan/server
@@ -32,19 +38,3 @@ autostart=true
 autorestart=true
 stderr_logfile=/var/log/supervisor/scan.err.log
 stdout_logfile=/var/log/supervisor/scan.log
-
-
-
-Файл сервиса запуска /usr/lib/systemd/system/goserver.service:
-[Unit]
-Description=goserver
-
-[Service]
-Type=simple
-Restart=always
-RestartSec=5s
-ExecStart=cd /root/scan && ./server
-
-[Install]
-WantedBy=multi-user.target
-

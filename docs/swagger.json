@@ -15,7 +15,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "scan.e92.ru",
     "basePath": "/api/v1",
     "paths": {},
     "securityDefinitions": {
