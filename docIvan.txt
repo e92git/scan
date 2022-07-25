@@ -10,9 +10,9 @@ swag init -g cmd/main.go
 
 -Автодеплой:
 https://github.com/e92git/scan/actions
+https://dev.to/miangame/how-to-automate-a-deploy-in-a-vps-with-github-actions-via-ssh-101e
 https://codesahara.com/blog/how-to-deploy-golang-with-supervisor/
 https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
-
 
 -Мой Github deploy script:
 cd scan
@@ -30,6 +30,7 @@ supervisorctl reload - при запускать после редактиров
 supervisorctl status
 supervisorctl restart scan - при запускать после редактирования .env на сервере!
 supervisorctl stop scan
+
 -SUPERVISOR Настройка (nano /etc/supervisor/conf.d/scan.conf):
 [program:scan]
 directory=/root/scan
@@ -38,3 +39,6 @@ autostart=true
 autorestart=true
 stderr_logfile=/var/log/supervisor/scan.err.log
 stdout_logfile=/var/log/supervisor/scan.log
+
+-NGINX:
+service nginx restart
