@@ -1,16 +1,25 @@
 package controller
 
 import (
-	// "scan/app/model"
-
 	"github.com/gin-gonic/gin"
 )
 
-func (c *Config) AddScans(g *gin.Context) {
+func (c *Config) AddScan(g *gin.Context) {
+	type request struct {
+		Place    string `json:"place"`
+		Plate    string `json:"plate"`
+		Datetime string `json:"datetime"`
+	}
+	req := &request{}
+
+	if err := g.BindJSON(req); err != nil {
+		return
+	}
+
 	newScan, err := c.service.Scan().FirstOrCreate(
-		g.Query("place"),
-		g.Query("plate"),
-		g.Query("datetime"),
+		req.Place,
+		req.Plate,
+		req.Datetime,
 	)
 	if err != nil {
 		c.error(g, err)
@@ -20,7 +29,7 @@ func (c *Config) AddScans(g *gin.Context) {
 	c.respond(g, newScan)
 }
 
-func (c *Config) AddScan(g *gin.Context) {
+func (c *Config) AddScanGet(g *gin.Context) {
 	newScan, err := c.service.Scan().FirstOrCreate(
 		g.Query("place"),
 		g.Query("plate"),

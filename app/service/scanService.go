@@ -1,18 +1,20 @@
 package service
 
 import (
+	"scan/app/helper"
 	"scan/app/model"
 	"scan/app/store"
-	"scan/app/helper"
 )
 
 type ScanService struct {
 	store *store.Store
+	locationService *LocationService
 }
 
-func NewScan(store *store.Store) *ScanService {
+func NewScan(store *store.Store, locationService *LocationService) *ScanService {
 	return &ScanService{
 		store: store,
+		locationService: locationService,
 	}
 }
 
@@ -21,7 +23,7 @@ func NewScan(store *store.Store) *ScanService {
 // }
 
 func (s *ScanService) FirstOrCreate(locationCode string, plate string, scannedAt string) (*model.Scan, error) {
-	l, err := s.store.Location().FindByCode(locationCode)
+	l, err := s.locationService.FindByCode(locationCode)
 	if err != nil {
 		return nil, err
 	}
@@ -38,8 +40,4 @@ func (s *ScanService) FirstOrCreate(locationCode string, plate string, scannedAt
 	}
 
 	return newScan, s.store.Scan().FirstOrCreate(newScan)
-}
-
-func strToTime(scannedAt string) {
-	panic("unimplemented")
 }

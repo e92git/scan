@@ -18,3 +18,7 @@ func NewLocation(store *store.Store) *LocationService {
 func (s *LocationService) All() ([]model.Location, error) {
 	return s.store.Location().All()
 }
+
+func (s *LocationService) FindByCode(code string) (*model.Location, error) {
+	return s.store.Location().FindByCode(code)
+}

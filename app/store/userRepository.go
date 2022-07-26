@@ -1,14 +1,21 @@
 package store
 
 import (
-	// "database/sql"
-	// "scan/app/model"
+	"scan/app/model"
 )
 
 // UserRepository ...
 type UserRepository struct {
 	store *Store
 }
+
+// FindByApiKey ...
+func (r *UserRepository) FindByApiKey(apiKey string) (*model.User, error) {
+	u := &model.User{}
+	res := r.store.db.Where("api_key = ?", apiKey).First(u)
+	return u, res.Error
+}
+
 
 // // Create ...
 // func (r *UserRepository) Create(u *model.User) error {

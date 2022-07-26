@@ -12,6 +12,7 @@ type Scan struct {
 	LocationId int64         `json:"location_id"`
 	Plate      string        `json:"plate"`
 	VinId      sql.NullInt64 `json:"vin_id,omitempty"`
+	UserId     int64 		 `json:"user_id,omitempty"`
 	ScannedAt  time.Time     `json:"scanned_at"`
 	CreatedAt  time.Time     `json:"created_at"`
 }
