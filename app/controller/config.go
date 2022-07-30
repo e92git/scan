@@ -62,8 +62,7 @@ func (c *Config) Auth() gin.HandlerFunc {
 			g.Abort()
 			return
 		}
-		g.Set("use2r", user)
-		g.Set("user", model.UserRoles)
+		g.Set("user", user)
 		g.Next()
 	}
 }
