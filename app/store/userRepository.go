@@ -9,13 +9,12 @@ type UserRepository struct {
 	store *Store
 }
 
-// FindByApiKey ...
-func (r *UserRepository) FindByApiKey(apiKey string) (*model.User, error) {
+// FindBySession ...
+func (r *UserRepository) FindBySession(session string) (*model.User, error) {
 	u := &model.User{}
-	res := r.store.db.Where("api_key = ?", apiKey).First(u)
+	res := r.store.db.Where("session = ?", session).First(u)
 	return u, res.Error
 }
-
 
 // // Create ...
 // func (r *UserRepository) Create(u *model.User) error {

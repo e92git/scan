@@ -1,19 +1,59 @@
 basePath: /api/v1
-host: scan.e92.ru
+definitions:
+  controller.ActionError:
+    properties:
+      error:
+        example: User not found
+        type: string
+      url:
+        example: scan.e92.ru/api/v1/scan
+        type: string
+    type: object
+  model.Location:
+    properties:
+      code:
+        example: pokrovka
+        type: string
+      id:
+        example: 12
+        type: integer
+      name:
+        example: Красноярск Покровка
+        type: string
+    type: object
 info:
-  contact:
-    email: support@swagger.io
-    name: API Support
-    url: http://www.swagger.io/support
-  description: This is a sample server celler server.
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
-  title: Swagger Example API
+  contact: {}
+  description: |-
+    Здесь представлены все методы для работы админстраторов и менеджеров магазинов.
+    Вопросы на info@e92.ru.
+  title: Дискаунтер автозачастей е92
   version: "1.0"
-paths: {}
+paths:
+  /locations:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Location'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ActionError'
+      security:
+      - ApiKeyAuth: []
+      summary: Список расположений камер
+      tags:
+      - Расположение
 securityDefinitions:
-  BasicAuth:
-    type: basic
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

@@ -12,39 +12,16 @@ import (
 	"rsc.io/quote"
 )
 
-// http://localhost:5555/scan?place=pokrovka&plate={plate}&datetime={datetime}&direction={direction}&image={image}
-
-// album represents data about a record album.
-// type album struct {
-// 	ID     string  `json:"id"`
-// 	Title  string  `json:"title"`
-// 	Artist string  `json:"artist,omitempty"`
-// 	Price  float64 `json:"price"`
-// }
-
-// // albums slice to seed record album data.
-// var albums = []album{
-// 	{ID: "1", Title: "Blue Train", Artist: "John Coltrane", Price: 56.99},
-// 	{ID: "2", Title: "Jeru", Artist: "Gerry Mulligan", Price: 17.99},
-// 	{ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
-// }
-
-// @title           Swagger Example API
+// @title           Дискаунтер автозачастей е92
 // @version         1.0
-// @description     This is a sample server celler server.
-// @termsOfService  http://swagger.io/terms/
+// @description     Здесь представлены все методы для работы админстраторов и менеджеров магазинов.
+// @description     Вопросы на info@e92.ru.
 
-// @contact.name   API Support
-// @contact.url    http://www.swagger.io/support
-// @contact.email  support@swagger.io
-
-// @license.name  Apache 2.0
-// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
-
-// @host      scan.e92.ru
 // @BasePath  /api/v1
 
-// @securityDefinitions.basic  BasicAuth
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	fmt.Println(quote.Hello())
 
@@ -59,37 +36,19 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 	{
-		// v1.Use(auth())
+		v1.Use(c.Auth())
+		v1.Use(c.MiddlewareShowApi())
 		v1.GET("/locations", c.GetLocations)
 		v1.POST("/scan", c.AddScan)
 		v1.GET("/scan", c.AddScanGet)
 		// v1.GET("/users/:id", apis.GetUser)
 	}
 
-	// r.GET("/albums", getAlbums)
-	// r.GET("/albums/:id", getAlbumByID)
-	// r.POST("/albums", postAlbums)
-
 	err = r.Run(c.Addr())
 	if err != nil {
 		log.Fatal(err)
 	}
 }
-
-// func auth() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		authHeader := c.GetHeader("Authorization")
-// 		if len(authHeader) == 0 {
-// 			httputil.NewError(c, http.StatusUnauthorized, errors.New("Authorization is required Header"))
-// 			c.Abort()
-// 		}
-// 		if authHeader != config.Config.ApiKey {
-// 			httputil.NewError(c, http.StatusUnauthorized, fmt.Errorf("this user isn't authorized to this operation: api_key=%s", authHeader))
-// 			c.Abort()
-// 		}
-// 		c.Next()
-// 	}
-// }
 
 // // getAlbums responds with the list of all albums as JSON.
 // func getAlbums(c *gin.Context) {

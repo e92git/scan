@@ -5,8 +5,25 @@ import (
 )
 
 type User struct {
-	ID        int64     `json:"id"`
-	Name      string    `json:"name"`
-	ApiKey    string    `json:"api_key"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        int64     `json:"id" example:"234"`
+	Name      string    `json:"name" example:"ivan_v"`
+	Role      string    `json:"role" example:"client" enums:"client,show_api,manager,admin"`
+	Session   string    `json:"session" example:""`
+	CreatedAt time.Time `json:"created_at" example:"2022-07-23 11:23:55"`
+}
+
+var UserRoles = struct {
+	Client  string
+	ShowApi string
+	Manager string
+	Admin   string
+}{
+	Client:  "client",
+	ShowApi: "show_api",
+	Manager: "manager",
+	Admin:   "admin",
+}
+
+func (u *User) IsMiddlewareApi() bool {
+	return u.Role == UserRoles.ShowApi || u.Role == UserRoles.Manager || u.Role == UserRoles.Admin
 }

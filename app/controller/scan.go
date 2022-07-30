@@ -1,10 +1,18 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
 func (c *Config) AddScan(g *gin.Context) {
+	err := http.ErrServerClosed
+	if err != nil {
+		c.error(g, err)
+		return
+	}
+
 	type request struct {
 		Place    string `json:"place"`
 		Plate    string `json:"plate"`
@@ -13,6 +21,7 @@ func (c *Config) AddScan(g *gin.Context) {
 	req := &request{}
 
 	if err := g.BindJSON(req); err != nil {
+		c.error(g, err)
 		return
 	}
 

@@ -15,6 +15,6 @@ func NewUser(store *store.Store) *UserService {
 	}
 }
 
-func (s *UserService) FindByApiKey(apiKey string) (*model.User, error) {
-	return s.store.User().FindByApiKey(apiKey)
+func (s *UserService) FindBySession(session string) (*model.User, error) {
+	return s.store.User().FindBySession(session)
 }

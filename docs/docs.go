@@ -10,24 +10,86 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {},
+    "paths": {
+        "/locations": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Расположение"
+                ],
+                "summary": "Список расположений камер",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Location"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ActionError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "controller.ActionError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "User not found"
+                },
+                "url": {
+                    "type": "string",
+                    "example": "scan.e92.ru/api/v1/scan"
+                }
+            }
+        },
+        "model.Location": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "pokrovka"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 12
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Красноярск Покровка"
+                }
+            }
+        }
+    },
     "securityDefinitions": {
-        "BasicAuth": {
-            "type": "basic"
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
@@ -35,11 +97,11 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "scan.e92.ru",
+	Host:             "",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Swagger Example API",
-	Description:      "This is a sample server celler server.",
+	Title:            "Дискаунтер автозачастей е92",
+	Description:      "Здесь представлены все методы для работы админстраторов и менеджеров магазинов.\nВопросы на info@e92.ru.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

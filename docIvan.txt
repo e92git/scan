@@ -18,7 +18,6 @@ https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-
 cd scan
 git pull
 go mod tidy
-swag init -g cmd/main.go
 go build cmd/main.go
 supervisorctl restart scan
 
@@ -26,9 +25,9 @@ supervisorctl restart scan
 /var/log/supervisor/scan.log - лог работы main.go
 
 -SUPERVISOR Проверка состояния:
-supervisorctl reload - при запускать после редактирования supervisor/../scan.conf на сервере!
+supervisorctl reload - запускать после редактирования supervisor/../scan.conf на сервере!
 supervisorctl status
-supervisorctl restart scan - при запускать после редактирования .env на сервере!
+supervisorctl restart scan - запускать после редактирования .env на сервере!
 supervisorctl stop scan
 
 -SUPERVISOR Настройка (nano /etc/supervisor/conf.d/scan.conf):
