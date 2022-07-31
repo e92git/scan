@@ -37,10 +37,13 @@ func main() {
 	v1 := r.Group("/api/v1")
 	{
 		v1.Use(c.Auth())
-		v1.Use(c.MiddlewareShowApi())
+
+		v1.Use(c.ShowApiMiddleware())
 		v1.GET("/locations", c.GetLocations)
+
+		v1.Use(c.ManagerMiddleware())
 		v1.POST("/scan", c.AddScan)
-		v1.GET("/scan", c.AddScanGet)
+		// v1.GET("/scan", c.AddScanGet)
 		// v1.GET("/users/:id", apis.GetUser)
 	}
 

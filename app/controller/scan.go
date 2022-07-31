@@ -1,34 +1,36 @@
 package controller
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
+type AddScanRequest struct {
+	Place    string `json:"place" example:"pokrovka"`
+	Plate    string `json:"plate" example:"M343TT123"`
+	Datetime string `json:"datetime" example:"2022-07-23 11:23:55"`
+}
+
+// AddScan godoc
+// @Summary      Добавить отсканированный номер
+// @Tags         Сканирование
+// @Accept       json
+// @Produce      json
+// @Param 		 scan body AddScanRequest true "Добавить сканирование"
+// @Success      200  {array}   model.Scan
+// @Failure      400  {object}  controller.ActionError
+// @Router       /scan [post]
+// @Security 	 ApiKeyAuth
 func (c *Config) AddScan(g *gin.Context) {
-	err := http.ErrServerClosed
-	if err != nil {
+	scan := &AddScanRequest{}
+	if err := g.BindJSON(scan); err != nil {
 		c.error(g, err)
 		return
 	}
 
-	type request struct {
-		Place    string `json:"place"`
-		Plate    string `json:"plate"`
-		Datetime string `json:"datetime"`
-	}
-	req := &request{}
-
-	if err := g.BindJSON(req); err != nil {
-		c.error(g, err)
-		return
-	}
-
-	newScan, err := c.service.Scan().FirstOrCreate(
-		req.Place,
-		req.Plate,
-		req.Datetime,
+	newScan, err := c.service.Scan().Create(
+		scan.Place,
+		scan.Plate,
+		scan.Datetime,
 	)
 	if err != nil {
 		c.error(g, err)
@@ -39,7 +41,7 @@ func (c *Config) AddScan(g *gin.Context) {
 }
 
 func (c *Config) AddScanGet(g *gin.Context) {
-	newScan, err := c.service.Scan().FirstOrCreate(
+	newScan, err := c.service.Scan().Create(
 		g.Query("place"),
 		g.Query("plate"),
 		g.Query("datetime"),

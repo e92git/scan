@@ -7,13 +7,13 @@ import (
 )
 
 type ScanService struct {
-	store *store.Store
+	store           *store.Store
 	locationService *LocationService
 }
 
 func NewScan(store *store.Store, locationService *LocationService) *ScanService {
 	return &ScanService{
-		store: store,
+		store:           store,
 		locationService: locationService,
 	}
 }
@@ -22,7 +22,7 @@ func NewScan(store *store.Store, locationService *LocationService) *ScanService 
 
 // }
 
-func (s *ScanService) FirstOrCreate(locationCode string, plate string, scannedAt string) (*model.Scan, error) {
+func (s *ScanService) Create(locationCode string, plate string, scannedAt string) (*model.Scan, error) {
 	l, err := s.locationService.FindByCode(locationCode)
 	if err != nil {
 		return nil, err
@@ -39,5 +39,5 @@ func (s *ScanService) FirstOrCreate(locationCode string, plate string, scannedAt
 		ScannedAt:  ScannedAtTime,
 	}
 
-	return newScan, s.store.Scan().FirstOrCreate(newScan)
+	return newScan, s.store.Scan().Create(newScan)
 }

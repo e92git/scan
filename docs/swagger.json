@@ -43,6 +43,53 @@
                     }
                 }
             }
+        },
+        "/scan": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Сканирование"
+                ],
+                "summary": "Добавить отсканированный номер",
+                "parameters": [
+                    {
+                        "description": "Добавить сканирование",
+                        "name": "scan",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.AddScanRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Scan"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ActionError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -56,6 +103,23 @@
                 "url": {
                     "type": "string",
                     "example": "scan.e92.ru/api/v1/scan"
+                }
+            }
+        },
+        "controller.AddScanRequest": {
+            "type": "object",
+            "properties": {
+                "datetime": {
+                    "type": "string",
+                    "example": "2022-07-23 11:23:55"
+                },
+                "place": {
+                    "type": "string",
+                    "example": "pokrovka"
+                },
+                "plate": {
+                    "type": "string",
+                    "example": "M343TT123"
                 }
             }
         },
@@ -73,6 +137,36 @@
                 "name": {
                     "type": "string",
                     "example": "Красноярск Покровка"
+                }
+            }
+        },
+        "model.Scan": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2022-07-28 11:23:55"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 76352
+                },
+                "location_id": {
+                    "type": "integer",
+                    "example": 12
+                },
+                "plate": {
+                    "type": "string",
+                    "example": "О245КМ142"
+                },
+                "scanned_at": {
+                    "type": "string",
+                    "example": "2022-07-23 11:23:55"
+                },
+                "user_id": {
+                    "description": "VinId      sql.NullInt64 `json:\"vin_id,omitempty\" swaggertype:\"integer\"`",
+                    "type": "integer",
+                    "example": 234
                 }
             }
         }

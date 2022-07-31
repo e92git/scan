@@ -18,12 +18,16 @@ var UserRoles = struct {
 	Manager string
 	Admin   string
 }{
-	Client:  "client",
-	ShowApi: "show_api",
-	Manager: "manager",
-	Admin:   "admin",
+	Client:  "client",   // Покупатели в магазине (нет доступа к API)
+	ShowApi: "show_api", // client + GET запросы в API
+	Manager: "manager",  // show_api + Все API-запросы доступные менеджеру магазина
+	Admin:   "admin",    // manager + Все API-запросы
 }
 
-func (u *User) IsMiddlewareApi() bool {
+func (u *User) HasShowApi() bool {
 	return u.Role == UserRoles.ShowApi || u.Role == UserRoles.Manager || u.Role == UserRoles.Admin
+}
+
+func (u *User) HasManager() bool {
+	return u.Role == UserRoles.Manager || u.Role == UserRoles.Admin
 }

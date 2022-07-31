@@ -9,6 +9,18 @@ definitions:
         example: scan.e92.ru/api/v1/scan
         type: string
     type: object
+  controller.AddScanRequest:
+    properties:
+      datetime:
+        example: "2022-07-23 11:23:55"
+        type: string
+      place:
+        example: pokrovka
+        type: string
+      plate:
+        example: M343TT123
+        type: string
+    type: object
   model.Location:
     properties:
       code:
@@ -20,6 +32,28 @@ definitions:
       name:
         example: Красноярск Покровка
         type: string
+    type: object
+  model.Scan:
+    properties:
+      created_at:
+        example: "2022-07-28 11:23:55"
+        type: string
+      id:
+        example: 76352
+        type: integer
+      location_id:
+        example: 12
+        type: integer
+      plate:
+        example: О245КМ142
+        type: string
+      scanned_at:
+        example: "2022-07-23 11:23:55"
+        type: string
+      user_id:
+        description: VinId      sql.NullInt64 `json:"vin_id,omitempty" swaggertype:"integer"`
+        example: 234
+        type: integer
     type: object
 info:
   contact: {}
@@ -51,6 +85,35 @@ paths:
       summary: Список расположений камер
       tags:
       - Расположение
+  /scan:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Добавить сканирование
+        in: body
+        name: scan
+        required: true
+        schema:
+          $ref: '#/definitions/controller.AddScanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Scan'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ActionError'
+      security:
+      - ApiKeyAuth: []
+      summary: Добавить отсканированный номер
+      tags:
+      - Сканирование
 securityDefinitions:
   ApiKeyAuth:
     in: header
