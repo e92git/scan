@@ -8,9 +8,9 @@ type Scan struct {
 	ID         int64  `json:"id" example:"76352"`
 	LocationId int64  `json:"location_id" example:"12"`
 	Plate      string `json:"plate" example:"О245КМ142"`
-	UserId    int64  `json:"user_id,omitempty" example:"234"`
-	ScannedAt string `json:"scanned_at" example:"2022-07-23 11:23:55"`
-	CreatedAt string `json:"created_at" example:"2022-07-28 11:23:55.999"`
+	UserId     int64  `json:"user_id,omitempty" example:"234"`
+	ScannedAt  string `json:"scanned_at" example:"2022-07-23 11:23:55"`
+	CreatedAt  string `json:"created_at" example:"2022-07-28 11:23:55.999"`
 }
 
 // Validate ...

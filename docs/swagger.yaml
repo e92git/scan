@@ -21,6 +21,18 @@ definitions:
         example: "2022-07-23 11:23:55"
         type: string
     type: object
+  controller.VinByPlateRequest:
+    properties:
+      place:
+        example: pokrovka
+        type: string
+      plate:
+        example: M343TT123
+        type: string
+      scanned_at:
+        example: "2022-07-23 11:23:55"
+        type: string
+    type: object
   model.Location:
     properties:
       code:
@@ -54,6 +66,51 @@ definitions:
         example: 234
         type: integer
     type: object
+  model.Vin:
+    properties:
+      author_user_id:
+        example: 234
+        type: integer
+      body:
+        example: KGC100005240
+        type: string
+      created_at:
+        example: "2022-07-28 11:23:55"
+        type: string
+      data:
+        example: '{...}'
+        type: string
+      error_message:
+        example: Номер не удалось найти
+        type: string
+      id:
+        example: 7635
+        type: integer
+      mark_id:
+        example: 23
+        type: integer
+      model_id:
+        example: 231
+        type: integer
+      plate:
+        example: О245КМ142
+        type: string
+      status_id:
+        example: 3
+        type: integer
+      updated_at:
+        example: "2022-07-23 11:23:55"
+        type: string
+      vin:
+        example: XTA219170K0330071
+        type: string
+      vin2:
+        example: XTA219170K0330071
+        type: string
+      year:
+        example: 2012
+        type: integer
+    type: object
 info:
   contact: {}
   description: |-
@@ -79,8 +136,6 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/controller.ActionError'
-      security:
-      - ApiKeyAuth: []
       summary: Список расположений камер
       tags:
       - Расположение
@@ -89,12 +144,12 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: Добавить сканирование
+      - description: Распознать по госномеру
         in: body
         name: scan
         required: true
         schema:
-          $ref: '#/definitions/controller.AddScanRequest'
+          $ref: '#/definitions/controller.VinByPlateRequest'
       produces:
       - application/json
       responses:
@@ -102,7 +157,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.Scan'
+              $ref: '#/definitions/model.Vin'
             type: array
         "400":
           description: Bad Request
@@ -110,9 +165,9 @@ paths:
             $ref: '#/definitions/controller.ActionError'
       security:
       - ApiKeyAuth: []
-      summary: Добавить отсканированный номер
+      summary: Распознать vin и другие данные по госномеру
       tags:
-      - Сканирование
+      - Распознание
 securityDefinitions:
   ApiKeyAuth:
     in: header

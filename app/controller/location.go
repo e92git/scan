@@ -14,7 +14,6 @@ import (
 // @Success      200  {array}   model.Location
 // @Failure      400  {object}  controller.ActionError
 // @Router       /locations [get]
-// @Security 	 ApiKeyAuth
 func (c *Config) GetLocations(g *gin.Context) {
 	locations, err := c.service.Location().All()
 	if err != nil {

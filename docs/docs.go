@@ -18,11 +18,6 @@ const docTemplate = `{
     "paths": {
         "/locations": {
             "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -66,17 +61,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Сканирование"
+                    "Распознание"
                 ],
-                "summary": "Добавить отсканированный номер",
+                "summary": "Распознать vin и другие данные по госномеру",
                 "parameters": [
                     {
-                        "description": "Добавить сканирование",
+                        "description": "Распознать по госномеру",
                         "name": "scan",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.AddScanRequest"
+                            "$ref": "#/definitions/controller.VinByPlateRequest"
                         }
                     }
                 ],
@@ -86,7 +81,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Scan"
+                                "$ref": "#/definitions/model.Vin"
                             }
                         }
                     },
@@ -115,6 +110,23 @@ const docTemplate = `{
             }
         },
         "controller.AddScanRequest": {
+            "type": "object",
+            "properties": {
+                "place": {
+                    "type": "string",
+                    "example": "pokrovka"
+                },
+                "plate": {
+                    "type": "string",
+                    "example": "M343TT123"
+                },
+                "scanned_at": {
+                    "type": "string",
+                    "example": "2022-07-23 11:23:55"
+                }
+            }
+        },
+        "controller.VinByPlateRequest": {
             "type": "object",
             "properties": {
                 "place": {
@@ -174,6 +186,67 @@ const docTemplate = `{
                 "user_id": {
                     "type": "integer",
                     "example": 234
+                }
+            }
+        },
+        "model.Vin": {
+            "type": "object",
+            "properties": {
+                "author_user_id": {
+                    "type": "integer",
+                    "example": 234
+                },
+                "body": {
+                    "type": "string",
+                    "example": "KGC100005240"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2022-07-28 11:23:55"
+                },
+                "data": {
+                    "type": "string",
+                    "example": "{...}"
+                },
+                "error_message": {
+                    "type": "string",
+                    "example": "Номер не удалось найти"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 7635
+                },
+                "mark_id": {
+                    "type": "integer",
+                    "example": 23
+                },
+                "model_id": {
+                    "type": "integer",
+                    "example": 231
+                },
+                "plate": {
+                    "type": "string",
+                    "example": "О245КМ142"
+                },
+                "status_id": {
+                    "type": "integer",
+                    "example": 3
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2022-07-23 11:23:55"
+                },
+                "vin": {
+                    "type": "string",
+                    "example": "XTA219170K0330071"
+                },
+                "vin2": {
+                    "type": "string",
+                    "example": "XTA219170K0330071"
+                },
+                "year": {
+                    "type": "integer",
+                    "example": 2012
                 }
             }
         }
