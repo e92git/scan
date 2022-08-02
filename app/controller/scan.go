@@ -5,9 +5,9 @@ import (
 )
 
 type AddScanRequest struct {
-	Place    string `json:"place" example:"pokrovka"`
-	Plate    string `json:"plate" example:"M343TT123"`
-	Datetime string `json:"datetime" example:"2022-07-23 11:23:55"`
+	Place     string `json:"place" example:"pokrovka"`
+	Plate     string `json:"plate" example:"M343TT123"`
+	ScannedAt string `json:"scanned_at" example:"2022-07-23 11:23:55"`
 }
 
 // AddScan godoc
@@ -30,7 +30,7 @@ func (c *Config) AddScan(g *gin.Context) {
 	newScan, err := c.service.Scan().Create(
 		scan.Place,
 		scan.Plate,
-		scan.Datetime,
+		scan.ScannedAt,
 	)
 	if err != nil {
 		c.error(g, err)

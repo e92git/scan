@@ -117,10 +117,6 @@ const docTemplate = `{
         "controller.AddScanRequest": {
             "type": "object",
             "properties": {
-                "datetime": {
-                    "type": "string",
-                    "example": "2022-07-23 11:23:55"
-                },
                 "place": {
                     "type": "string",
                     "example": "pokrovka"
@@ -128,6 +124,10 @@ const docTemplate = `{
                 "plate": {
                     "type": "string",
                     "example": "M343TT123"
+                },
+                "scanned_at": {
+                    "type": "string",
+                    "example": "2022-07-23 11:23:55"
                 }
             }
         },
@@ -153,7 +153,7 @@ const docTemplate = `{
             "properties": {
                 "created_at": {
                     "type": "string",
-                    "example": "2022-07-28 11:23:55"
+                    "example": "2022-07-28 11:23:55.999"
                 },
                 "id": {
                     "type": "integer",
@@ -172,7 +172,6 @@ const docTemplate = `{
                     "example": "2022-07-23 11:23:55"
                 },
                 "user_id": {
-                    "description": "VinId      sql.NullInt64 ` + "`" + `json:\"vin_id,omitempty\" swaggertype:\"integer\"` + "`" + `",
                     "type": "integer",
                     "example": 234
                 }

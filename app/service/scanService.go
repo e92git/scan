@@ -1,9 +1,9 @@
 package service
 
 import (
-	"scan/app/helper"
 	"scan/app/model"
 	"scan/app/store"
+	"time"
 )
 
 type ScanService struct {
@@ -28,15 +28,11 @@ func (s *ScanService) Create(locationCode string, plate string, scannedAt string
 		return nil, err
 	}
 
-	ScannedAtTime, err := helper.StrToTime(scannedAt)
-	if err != nil {
-		return nil, err
-	}
-
 	newScan := &model.Scan{
 		LocationId: l.ID,
 		Plate:      plate,
-		ScannedAt:  ScannedAtTime,
+		ScannedAt:  scannedAt,
+		CreatedAt:  time.Now().Format("2006-01-02 15:04:05.999"),
 	}
 
 	return newScan, s.store.Scan().Create(newScan)

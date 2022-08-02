@@ -11,14 +11,14 @@ definitions:
     type: object
   controller.AddScanRequest:
     properties:
-      datetime:
-        example: "2022-07-23 11:23:55"
-        type: string
       place:
         example: pokrovka
         type: string
       plate:
         example: M343TT123
+        type: string
+      scanned_at:
+        example: "2022-07-23 11:23:55"
         type: string
     type: object
   model.Location:
@@ -36,7 +36,7 @@ definitions:
   model.Scan:
     properties:
       created_at:
-        example: "2022-07-28 11:23:55"
+        example: "2022-07-28 11:23:55.999"
         type: string
       id:
         example: 76352
@@ -51,7 +51,6 @@ definitions:
         example: "2022-07-23 11:23:55"
         type: string
       user_id:
-        description: VinId      sql.NullInt64 `json:"vin_id,omitempty" swaggertype:"integer"`
         example: 234
         type: integer
     type: object
