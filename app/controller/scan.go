@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"scan/app/helper"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,10 +29,16 @@ func (c *Config) AddScan(g *gin.Context) {
 		return
 	}
 
+	scannedAt, err := helper.StrToTime(scan.ScannedAt);
+	if err != nil {
+		c.error(g, err)
+		return
+	}
+
 	newScan, err := c.service.Scan().Create(
 		scan.Place,
 		scan.Plate,
-		scan.ScannedAt,
+		scannedAt,
 	)
 	if err != nil {
 		c.error(g, err)
@@ -40,16 +48,16 @@ func (c *Config) AddScan(g *gin.Context) {
 	c.respond(g, newScan)
 }
 
-func (c *Config) AddScanGet(g *gin.Context) {
-	newScan, err := c.service.Scan().Create(
-		g.Query("place"),
-		g.Query("plate"),
-		g.Query("datetime"),
-	)
-	if err != nil {
-		c.error(g, err)
-		return
-	}
+// func (c *Config) AddScanGet(g *gin.Context) {
+// 	newScan, err := c.service.Scan().Create(
+// 		g.Query("place"),
+// 		g.Query("plate"),
+// 		g.Query("datetime"),
+// 	)
+// 	if err != nil {
+// 		c.error(g, err)
+// 		return
+// 	}
 
-	c.respond(g, newScan)
-}
+// 	c.respond(g, newScan)
+// }

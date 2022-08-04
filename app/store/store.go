@@ -6,10 +6,11 @@ import (
 
 // Store ...
 type Store struct {
-	db             		*gorm.DB
-	userRepository 		*UserRepository
-	locationRepository  *LocationRepository
-	scanRepository  	*ScanRepository
+	db                 *gorm.DB
+	userRepository     *UserRepository
+	locationRepository *LocationRepository
+	scanRepository     *ScanRepository
+	vinRepository      *VinRepository
 }
 
 // New ...
@@ -50,4 +51,15 @@ func (s *Store) Scan() *ScanRepository {
 		store: s,
 	}
 	return s.scanRepository
+}
+
+// Vin ...
+func (s *Store) Vin() *VinRepository {
+	if s.vinRepository != nil {
+		return s.vinRepository
+	}
+	s.vinRepository = &VinRepository{
+		store: s,
+	}
+	return s.vinRepository
 }

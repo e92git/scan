@@ -10,6 +10,7 @@ type Config struct {
 	location *LocationService
 	scan     *ScanService
 	user     *UserService
+	vin      *VinService
 }
 
 func New(store *store.Store) *Config {
@@ -38,4 +39,11 @@ func (c *Config) User() *UserService {
 		c.user = NewUser(c.store)
 	}
 	return c.user
+}
+
+func (c *Config) Vin() *VinService {
+	if c.vin == nil {
+		c.vin = NewVin(c.store)
+	}
+	return c.vin
 }

@@ -23,14 +23,8 @@ definitions:
     type: object
   controller.VinByPlateRequest:
     properties:
-      place:
-        example: pokrovka
-        type: string
       plate:
         example: M343TT123
-        type: string
-      scanned_at:
-        example: "2022-07-23 11:23:55"
         type: string
     type: object
   model.Location:
@@ -48,7 +42,7 @@ definitions:
   model.Scan:
     properties:
       created_at:
-        example: "2022-07-28 11:23:55.999"
+        example: "2022-08-04T12:23:52.372+07:00"
         type: string
       id:
         example: 76352
@@ -60,14 +54,39 @@ definitions:
         example: О245КМ142
         type: string
       scanned_at:
-        example: "2022-07-23 11:23:55"
+        example: "2022-07-29T11:23:55+07:00"
         type: string
       user_id:
         example: 234
         type: integer
     type: object
+  model.User:
+    properties:
+      created_at:
+        example: "2022-07-23 11:23:55"
+        type: string
+      id:
+        example: 234
+        type: integer
+      name:
+        example: ivan_v
+        type: string
+      role:
+        enum:
+        - client
+        - show_api
+        - manager
+        - admin
+        example: client
+        type: string
+      session:
+        example: ""
+        type: string
+    type: object
   model.Vin:
     properties:
+      author:
+        $ref: '#/definitions/model.User'
       author_user_id:
         example: 234
         type: integer
@@ -75,13 +94,7 @@ definitions:
         example: KGC100005240
         type: string
       created_at:
-        example: "2022-07-28 11:23:55"
-        type: string
-      data:
-        example: '{...}'
-        type: string
-      error_message:
-        example: Номер не удалось найти
+        example: "2022-07-28T11:23:55+07:00"
         type: string
       id:
         example: 7635
@@ -95,11 +108,17 @@ definitions:
       plate:
         example: О245КМ142
         type: string
+      response:
+        example: '{...}'
+        type: string
+      response_error:
+        example: "400"
+        type: string
       status_id:
         example: 3
         type: integer
       updated_at:
-        example: "2022-07-23 11:23:55"
+        example: "2022-07-23T11:23:55+07:00"
         type: string
       vin:
         example: XTA219170K0330071
@@ -144,9 +163,38 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: Распознать по госномеру
+      - description: Добавить сканирование
         in: body
         name: scan
+        required: true
+        schema:
+          $ref: '#/definitions/controller.AddScanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Scan'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ActionError'
+      security:
+      - ApiKeyAuth: []
+      summary: Добавить отсканированный номер
+      tags:
+      - Сканирование
+  /vin:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Распознать по госномеру
+        in: body
+        name: vin
         required: true
         schema:
           $ref: '#/definitions/controller.VinByPlateRequest'

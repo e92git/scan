@@ -61,13 +61,60 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
+                    "Сканирование"
+                ],
+                "summary": "Добавить отсканированный номер",
+                "parameters": [
+                    {
+                        "description": "Добавить сканирование",
+                        "name": "scan",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.AddScanRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Scan"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ActionError"
+                        }
+                    }
+                }
+            }
+        },
+        "/vin": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
                     "Распознание"
                 ],
                 "summary": "Распознать vin и другие данные по госномеру",
                 "parameters": [
                     {
                         "description": "Распознать по госномеру",
-                        "name": "scan",
+                        "name": "vin",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -129,17 +176,9 @@ const docTemplate = `{
         "controller.VinByPlateRequest": {
             "type": "object",
             "properties": {
-                "place": {
-                    "type": "string",
-                    "example": "pokrovka"
-                },
                 "plate": {
                     "type": "string",
                     "example": "M343TT123"
-                },
-                "scanned_at": {
-                    "type": "string",
-                    "example": "2022-07-23 11:23:55"
                 }
             }
         },
@@ -165,7 +204,7 @@ const docTemplate = `{
             "properties": {
                 "created_at": {
                     "type": "string",
-                    "example": "2022-07-28 11:23:55.999"
+                    "example": "2022-08-04T12:23:52.372+07:00"
                 },
                 "id": {
                     "type": "integer",
@@ -181,7 +220,7 @@ const docTemplate = `{
                 },
                 "scanned_at": {
                     "type": "string",
-                    "example": "2022-07-23 11:23:55"
+                    "example": "2022-07-29T11:23:55+07:00"
                 },
                 "user_id": {
                     "type": "integer",
@@ -189,9 +228,43 @@ const docTemplate = `{
                 }
             }
         },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2022-07-23 11:23:55"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 234
+                },
+                "name": {
+                    "type": "string",
+                    "example": "ivan_v"
+                },
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "client",
+                        "show_api",
+                        "manager",
+                        "admin"
+                    ],
+                    "example": "client"
+                },
+                "session": {
+                    "type": "string",
+                    "example": ""
+                }
+            }
+        },
         "model.Vin": {
             "type": "object",
             "properties": {
+                "author": {
+                    "$ref": "#/definitions/model.User"
+                },
                 "author_user_id": {
                     "type": "integer",
                     "example": 234
@@ -202,15 +275,7 @@ const docTemplate = `{
                 },
                 "created_at": {
                     "type": "string",
-                    "example": "2022-07-28 11:23:55"
-                },
-                "data": {
-                    "type": "string",
-                    "example": "{...}"
-                },
-                "error_message": {
-                    "type": "string",
-                    "example": "Номер не удалось найти"
+                    "example": "2022-07-28T11:23:55+07:00"
                 },
                 "id": {
                     "type": "integer",
@@ -228,13 +293,21 @@ const docTemplate = `{
                     "type": "string",
                     "example": "О245КМ142"
                 },
+                "response": {
+                    "type": "string",
+                    "example": "{...}"
+                },
+                "response_error": {
+                    "type": "string",
+                    "example": "400"
+                },
                 "status_id": {
                     "type": "integer",
                     "example": 3
                 },
                 "updated_at": {
                     "type": "string",
-                    "example": "2022-07-23 11:23:55"
+                    "example": "2022-07-23T11:23:55+07:00"
                 },
                 "vin": {
                     "type": "string",

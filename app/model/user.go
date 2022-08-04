@@ -1,13 +1,13 @@
 package model
 
-import ()
+import "time"
 
 type User struct {
 	ID        int64   `json:"id" example:"234"`
 	Name      string  `json:"name" example:"ivan_v"`
 	Role      string  `json:"role" example:"client" enums:"client,show_api,manager,admin"`
 	Session   *string `json:"session" example:""`
-	CreatedAt string  `json:"created_at" example:"2022-07-23 11:23:55"`
+	CreatedAt time.Time  `json:"created_at" example:"2022-07-23 11:23:55"`
 }
 
 var UserRoles = struct {

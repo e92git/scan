@@ -1,13 +1,14 @@
 package controller
 
 import (
+	"fmt"
+	"scan/app/model"
+
 	"github.com/gin-gonic/gin"
 )
 
 type VinByPlateRequest struct {
-	Place     string `json:"place" example:"pokrovka"`
-	Plate     string `json:"plate" example:"M343TT123"`
-	ScannedAt string `json:"scanned_at" example:"2022-07-23 11:23:55"`
+	Plate string `json:"plate" example:"M343TT123"`
 }
 
 // VinByPlate godoc
@@ -15,29 +16,35 @@ type VinByPlateRequest struct {
 // @Tags         Распознание
 // @Accept       json
 // @Produce      json
-// @Param 		 scan body VinByPlateRequest true "Распознать по госномеру"
+// @Param 		 vin body VinByPlateRequest true "Распознать по госномеру"
 // @Success      200  {array}   model.Vin
 // @Failure      400  {object}  controller.ActionError
-// @Router       /scan [post]
+// @Router       /vin [post]
 // @Security 	 ApiKeyAuth
 func (c *Config) VinByPlate(g *gin.Context) {
-	scan := &AddScanRequest{}
-	if err := g.BindJSON(scan); err != nil {
+	scan := &model.Scan{ID: 1}
+	c.store.Scan().First(scan)
+	c.respond(g, scan)
+	fmt.Println(scan)
+	return
+
+	vin := &VinByPlateRequest{}
+	if err := g.BindJSON(vin); err != nil {
 		c.error(g, err)
 		return
 	}
+	user, _ := c.GetCurrentUser(g)
 
-	newScan, err := c.service.Scan().Create(
-		scan.Place,
-		scan.Plate,
-		scan.ScannedAt,
+	new, err := c.service.Vin().VinByPlate(
+		vin.Plate,
+		user.ID,
 	)
 	if err != nil {
 		c.error(g, err)
 		return
 	}
 
-	c.respond(g, newScan)
+	c.respond(g, new)
 }
 
 // Уже был найден ранее

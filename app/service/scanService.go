@@ -22,7 +22,7 @@ func NewScan(store *store.Store, locationService *LocationService) *ScanService 
 
 // }
 
-func (s *ScanService) Create(locationCode string, plate string, scannedAt string) (*model.Scan, error) {
+func (s *ScanService) Create(locationCode string, plate string, scannedAt time.Time) (*model.Scan, error) {
 	l, err := s.locationService.FindByCode(locationCode)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,6 @@ func (s *ScanService) Create(locationCode string, plate string, scannedAt string
 		LocationId: l.ID,
 		Plate:      plate,
 		ScannedAt:  scannedAt,
-		CreatedAt:  time.Now().Format("2006-01-02 15:04:05.999"),
 	}
 
 	return newScan, s.store.Scan().Create(newScan)

@@ -2,7 +2,6 @@ package controller
 
 import (
 	"errors"
-	"fmt"
 	"scan/app/model"
 	"strconv"
 
@@ -38,7 +37,7 @@ func (c *Config) Auth() gin.HandlerFunc {
 // Middleware ShowApi
 func (c *Config) ShowApiMiddleware() gin.HandlerFunc {
 	return func(g *gin.Context) {
-		user, err := c.GetUser(g)
+		user, err := c.GetCurrentUser(g)
 		if err != nil {
 			c.error(g, err)
 			g.Abort()
@@ -56,7 +55,7 @@ func (c *Config) ShowApiMiddleware() gin.HandlerFunc {
 // Middleware Manager
 func (c *Config) ManagerMiddleware() gin.HandlerFunc {
 	return func(g *gin.Context) {
-		user, err := c.GetUser(g)
+		user, err := c.GetCurrentUser(g)
 		if err != nil {
 			c.error(g, err)
 			g.Abort()
@@ -71,8 +70,8 @@ func (c *Config) ManagerMiddleware() gin.HandlerFunc {
 	}
 }
 
-// GetUser from the gin reqeust
-func (c *Config) GetUser(g *gin.Context) (*model.User, error) {
+// GetCurrentUser from the gin reqeust
+func (c *Config) GetCurrentUser(g *gin.Context) (*model.User, error) {
 	user, found := g.Get("user")
 	if found == false {
 		return nil, errors.New("User not found in GetUser")
@@ -81,6 +80,5 @@ func (c *Config) GetUser(g *gin.Context) (*model.User, error) {
 	if convert == false {
 		return nil, errors.New("User not convert in GetUser")
 	}
-	fmt.Println("---GetUser---")
 	return u, nil
 }

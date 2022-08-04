@@ -47,7 +47,7 @@ func main() {
 		// user + show_api middleware
 		v1.Use(c.ManagerMiddleware())
 		v1.POST("/scan", c.AddScan)
-		v1.POST("/findByPlate", c.VinByPlate)
+		v1.POST("/vin", c.VinByPlate)
 
 		// v1.GET("/scan", c.AddScanGet)
 		// v1.GET("/users/:id", apis.GetUser)

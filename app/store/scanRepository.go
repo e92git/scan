@@ -29,6 +29,12 @@ func (r *ScanRepository) FirstOrCreate(s *model.Scan) error {
 	return res.Error
 }
 
+// First ...
+func (r *ScanRepository) First(s *model.Scan) error {
+	res := r.store.db.First(s)
+	return res.Error
+}
+
 
 // Create ...
 // func (r *ScanRepository) Create(s *model.Scan) error {
