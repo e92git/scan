@@ -1,6 +1,8 @@
 
 -Команды (из корня проекта):
+go mod init scan - создание проекта scan в корне
 go mod tidy - обновить зависимости всего проекта
+go get -u ./cmd - обновление всех модулей в проекте
 go get github.com/foo - установить зависимость foo
 go run cmd/main.go - запустить проект
 go build cmd/main.go - создать exe файл проекта (/main.exe)
@@ -17,6 +19,7 @@ https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-
 -Мой Github deploy script:
 cd scan
 git pull
+go mod init scan
 go mod tidy
 go build cmd/main.go
 supervisorctl restart scan

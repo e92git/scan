@@ -2,3 +2,5 @@
 .env
 main.exe
 main
+go.mod
+go.sum
