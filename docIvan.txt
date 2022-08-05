@@ -24,6 +24,7 @@ go mod tidy
 go build cmd/main.go
 supervisorctl restart scan
 
+
 -LOG:
 /var/log/supervisor/scan.log - лог работы main.go
 
