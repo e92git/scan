@@ -2,6 +2,7 @@ package store
 
 import (
 	"scan/app/model"
+	"github.com/gookit/validate"
 )
 
 type VinRepository struct {
@@ -11,8 +12,9 @@ type VinRepository struct {
 
 // FirstOrCreate ...
 func (r *VinRepository) FirstOrCreate(m *model.Vin) error {
-	if err := m.Validate(); err != nil {
-		return err
+	v := validate.Struct(m)
+	if !v.Validate() {
+		return v.Errors
 	}
 
 	res := r.store.db.Where(model.Vin{Plate: m.Plate}).FirstOrCreate(m)
@@ -21,8 +23,9 @@ func (r *VinRepository) FirstOrCreate(m *model.Vin) error {
 
 // Save 
 func (r *VinRepository) Save(m *model.Vin) error {
-	if err := m.Validate(); err != nil {
-		return err
+	v := validate.Struct(m)
+	if !v.Validate() {
+		return v.Errors
 	}
 
 	res := r.store.db.Save(m)

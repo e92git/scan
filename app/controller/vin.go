@@ -1,16 +1,12 @@
 package controller
 
 import (
-	"fmt"
-	"scan/app/model"
-
 	"github.com/gin-gonic/gin"
 )
 
 type VinByPlateRequest struct {
-	Plate string `json:"plate" example:"M343TT123"`
+	Plate string `json:"plate" example:"M343TT123" validate:"required"`
 }
-
 // VinByPlate godoc
 // @Summary      Распознать vin и другие данные по госномеру
 // @Tags         Распознание
@@ -22,23 +18,14 @@ type VinByPlateRequest struct {
 // @Router       /vin [post]
 // @Security 	 ApiKeyAuth
 func (c *Config) VinByPlate(g *gin.Context) {
-	scan := &model.Scan{ID: 1}
-	c.store.Scan().First(scan)
-	c.respond(g, scan)
-	fmt.Println(scan)
-	return
-
-	vin := &VinByPlateRequest{}
-	if err := g.BindJSON(vin); err != nil {
+	req := &VinByPlateRequest{}
+	user, err := c.initRequest(g, req)
+	if err != nil {
 		c.error(g, err)
 		return
 	}
-	user, _ := c.GetCurrentUser(g)
 
-	new, err := c.service.Vin().VinByPlate(
-		vin.Plate,
-		user.ID,
-	)
+	new, err := c.service.Vin().VinByPlate(req.Plate, user.ID)
 	if err != nil {
 		c.error(g, err)
 		return

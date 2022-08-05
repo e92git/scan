@@ -2,6 +2,7 @@ package store
 
 import (
 	"scan/app/model"
+	"github.com/gookit/validate"
 )
 
 type ScanRepository struct {
@@ -11,8 +12,9 @@ type ScanRepository struct {
 
 // Create ...
 func (r *ScanRepository) Create(s *model.Scan) error {
-	if err := s.Validate(); err != nil {
-		return err
+	v := validate.Struct(s)
+	if !v.Validate() {
+		return v.Errors
 	}
 
 	res := r.store.db.Create(s)
@@ -21,8 +23,9 @@ func (r *ScanRepository) Create(s *model.Scan) error {
 
 // FirstOrCreate ...
 func (r *ScanRepository) FirstOrCreate(s *model.Scan) error {
-	if err := s.Validate(); err != nil {
-		return err
+	v := validate.Struct(s)
+	if !v.Validate() {
+		return v.Errors
 	}
 
 	res := r.store.db.Where(s).FirstOrCreate(s)

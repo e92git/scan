@@ -20,12 +20,18 @@ definitions:
       scanned_at:
         example: "2022-07-23 11:23:55"
         type: string
+    required:
+    - place
+    - plate
+    - scanned_at
     type: object
   controller.VinByPlateRequest:
     properties:
       plate:
         example: M343TT123
         type: string
+    required:
+    - plate
     type: object
   model.Location:
     properties:
@@ -59,34 +65,14 @@ definitions:
       user_id:
         example: 234
         type: integer
-    type: object
-  model.User:
-    properties:
-      created_at:
-        example: "2022-07-23 11:23:55"
-        type: string
-      id:
-        example: 234
-        type: integer
-      name:
-        example: ivan_v
-        type: string
-      role:
-        enum:
-        - client
-        - show_api
-        - manager
-        - admin
-        example: client
-        type: string
-      session:
-        example: ""
-        type: string
+    required:
+    - location_id
+    - plate
+    - scanned_at
+    - user_id
     type: object
   model.Vin:
     properties:
-      author:
-        $ref: '#/definitions/model.User'
       author_user_id:
         example: 234
         type: integer
@@ -129,6 +115,10 @@ definitions:
       year:
         example: 2012
         type: integer
+    required:
+    - author_user_id
+    - plate
+    - status_id
     type: object
 info:
   contact: {}

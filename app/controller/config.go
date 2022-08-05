@@ -4,10 +4,12 @@ import (
 	"log"
 	"net/http"
 	"scan/app/apiserver"
+	"scan/app/model"
 	"scan/app/service"
 	"scan/app/store"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gookit/validate"
 )
 
 type Config struct {
@@ -41,6 +43,21 @@ func New() (*Config, error) {
 
 func (c *Config) Addr() string {
 	return c.config.BindAddr
+}
+
+func (c *Config) initRequest(g *gin.Context, req interface{}) (*model.User, error) {
+	if err := g.BindJSON(req); err != nil {
+		return nil, err
+	}
+	v := validate.Struct(req)
+	if !v.Validate() {
+		return nil, v.Errors
+	}
+	user, err := c.GetCurrentUser(g)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (c *Config) respond(g *gin.Context, obj any) {

@@ -158,6 +158,11 @@ const docTemplate = `{
         },
         "controller.AddScanRequest": {
             "type": "object",
+            "required": [
+                "place",
+                "plate",
+                "scanned_at"
+            ],
             "properties": {
                 "place": {
                     "type": "string",
@@ -175,6 +180,9 @@ const docTemplate = `{
         },
         "controller.VinByPlateRequest": {
             "type": "object",
+            "required": [
+                "plate"
+            ],
             "properties": {
                 "plate": {
                     "type": "string",
@@ -201,6 +209,12 @@ const docTemplate = `{
         },
         "model.Scan": {
             "type": "object",
+            "required": [
+                "location_id",
+                "plate",
+                "scanned_at",
+                "user_id"
+            ],
             "properties": {
                 "created_at": {
                     "type": "string",
@@ -228,43 +242,14 @@ const docTemplate = `{
                 }
             }
         },
-        "model.User": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string",
-                    "example": "2022-07-23 11:23:55"
-                },
-                "id": {
-                    "type": "integer",
-                    "example": 234
-                },
-                "name": {
-                    "type": "string",
-                    "example": "ivan_v"
-                },
-                "role": {
-                    "type": "string",
-                    "enum": [
-                        "client",
-                        "show_api",
-                        "manager",
-                        "admin"
-                    ],
-                    "example": "client"
-                },
-                "session": {
-                    "type": "string",
-                    "example": ""
-                }
-            }
-        },
         "model.Vin": {
             "type": "object",
+            "required": [
+                "author_user_id",
+                "plate",
+                "status_id"
+            ],
             "properties": {
-                "author": {
-                    "$ref": "#/definitions/model.User"
-                },
                 "author_user_id": {
                     "type": "integer",
                     "example": 234
