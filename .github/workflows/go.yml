@@ -31,7 +31,6 @@ jobs:
           script: |
             cd scan
             git pull
-            go mod init scan
             go mod tidy
             go build cmd/main.go
             supervisorctl restart scan
