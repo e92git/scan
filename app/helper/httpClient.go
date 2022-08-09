@@ -13,7 +13,9 @@ func HttpClient() *http.Client {
 	return client
 }
 
-func SendRequest(client *http.Client, method string, url string, jsonData string) (*int, *[]byte, error) {
+// SendRequest - отправить запрос на удаленный сервер
+// jsonData -  struct{..} OR []byte(`{..}`) (string с json не работает)
+func SendRequest(client *http.Client, method string, url string, jsonData any, authHeader string) (*int, *[]byte, error) {
 	jsonBytes, err := json.Marshal(jsonData)
 	if err != nil {
 		return nil, nil, err
@@ -23,6 +25,9 @@ func SendRequest(client *http.Client, method string, url string, jsonData string
 	if err != nil {
 		return nil, nil, err
 	}
+
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", authHeader)
 
 	response, err := client.Do(req)
 	if err != nil {

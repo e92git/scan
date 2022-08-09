@@ -1,6 +1,8 @@
 package model
 
 import (
+	"encoding/json"
+	"errors"
 	"time"
 )
 
@@ -23,6 +25,31 @@ type Vin struct {
 	Author *User `json:"-" gorm:"foreignKey:AuthorUserId"`
 }
 
+type responseItem struct {
+	Uid        string `json:"uid"`
+	IsNew      bool   `json:"isnew"`
+	SuggestGet string `json:"suggest_get"`
+}
+type response struct {
+	Data []responseItem `json:"data"`
+}
+
+func (v *Vin) GetAutocodeUid() (*string, error) {
+	if v.Response == nil {
+		return nil, errors.New("Vin.Response is nil")
+	}
+	r := response{}
+	err := json.Unmarshal([]byte(*v.Response), &r)
+	if err != nil {
+		return nil, err
+	}
+	if len(r.Data) > 0 {
+		uid := r.Data[0].Uid
+		return &uid, nil
+	}
+	return nil, errors.New("Autocode uid not found")
+}
+
 var VinStatuses = struct {
 	Created     int
 	SendError   int
@@ -37,4 +64,12 @@ var VinStatuses = struct {
 
 func (s *Vin) NeedSend() bool {
 	return s.StatusId == VinStatuses.Created || s.StatusId == VinStatuses.SendSuccess
+}
+
+func (s *Vin) IsSuccessStatus() bool {
+	return s.StatusId == VinStatuses.Success
+}
+
+func (s *Vin) IsErrorStatus() bool {
+	return s.StatusId == VinStatuses.SendError
 }

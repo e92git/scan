@@ -9,6 +9,7 @@ type AddScanRequest struct {
 	Plate     string `json:"plate" example:"M343TT123" validate:"required"`
 	ScannedAt string `json:"scanned_at" example:"2022-07-23 11:23:55" validate:"required"`
 }
+
 // AddScan godoc
 // @Summary      Добавить отсканированный номер
 // @Tags         Сканирование

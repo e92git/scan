@@ -45,7 +45,7 @@ func (c *Config) Addr() string {
 	return c.config.BindAddr
 }
 
-func (c *Config) initRequest(g *gin.Context, req interface{}) (*model.User, error) {
+func (c *Config) initRequest(g *gin.Context, req any) (*model.User, error) {
 	if err := g.BindJSON(req); err != nil {
 		return nil, err
 	}
