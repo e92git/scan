@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -20,8 +21,6 @@ func NewVin(store *store.Store) *VinService {
 	}
 }
 
-var constApiKey string = "AR-REST aV90cm9maW1vdl9pbnRlZ3JhdGlvbkBlOTI6MTY0MTQwMTEyMzo5OTk5OTk5OTk6VHBFcGRlMm5tdzVwcW0zbnExZ0o0dz09"
-
 func (s *VinService) VinByPlate(plate string, authorUserId int64) (*model.Vin, error) {
 	vin, err := s.FirstOrCreate(plate, authorUserId)
 	if err != nil {
@@ -33,12 +32,8 @@ func (s *VinService) VinByPlate(plate string, authorUserId int64) (*model.Vin, e
 		return vin, nil
 	}
 
-	c := helper.HttpClient()
-	err = s.autocodePutUid(c, vin)
-	if err != nil {
-		return nil, err
-	}
-	err = s.autocodePutReport(c, vin)
+	// find vin
+	err = s.autocodePutVin(vin)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +53,24 @@ func (s *VinService) FirstOrCreate(plate string, authorUserId int64) (*model.Vin
 	return newVin, s.store.Vin().FirstOrCreate(newVin)
 }
 
+//
 // private
+//
+var constApiKey string = "AR-REST aV90cm9maW1vdl9pbnRlZ3JhdGlvbkBlOTI6MTY0MTQwMTEyMzo5OTk5OTk5OTk6VHBFcGRlMm5tdzVwcW0zbnExZ0o0dz09"
+
+// дополнить объект vin вин-кодом и др. данными (по грз vin.plate)
+func (s *VinService) autocodePutVin(vin *model.Vin) error {
+	c := helper.HttpClient()
+	err := s.autocodePutUid(c, vin)
+	if err != nil {
+		return err
+	}
+	err = s.autocodePutReport(c, vin)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 // find and put autocodeUid by plate into vin (api request)
 func (s *VinService) autocodePutUid(c *http.Client, vin *model.Vin) error {
@@ -80,30 +92,13 @@ func (s *VinService) autocodePutUid(c *http.Client, vin *model.Vin) error {
 
 	// big error (fake domen)
 	if err != nil {
-		errMessage := err.Error()
-		vin.Response = nil
-		vin.ResponseError = &errMessage
-		vin.StatusId = model.VinStatuses.SendError
-		saveErr := s.store.Vin().Save(vin)
-		if saveErr != nil {
-			return saveErr
-		}
-		return err
+		return s.saveError(vin, nil, err)
 	}
-	// fmt.Println(*statusCode)
-	// fmt.Println(string(*body))
 	// error 400, 500
 	if *statusCode != 200 {
 		response := string(*body)
-		errMessage := fmt.Sprintf("%d", *statusCode) + ": api request error"
-		vin.Response = &response
-		vin.ResponseError = &errMessage
-		vin.StatusId = model.VinStatuses.SendError
-		saveErr := s.store.Vin().Save(vin)
-		if saveErr != nil {
-			return saveErr
-		}
-		return errors.New(errMessage)
+		responseError := fmt.Sprintf("%d", *statusCode) + ": autocodePutUid request error"
+		return s.saveError(vin, &response, errors.New(responseError))
 	}
 	// success 200
 	if *statusCode == 200 {
@@ -115,9 +110,44 @@ func (s *VinService) autocodePutUid(c *http.Client, vin *model.Vin) error {
 		if saveErr != nil {
 			return saveErr
 		}
+		return nil
 	}
 
-	return nil
+	return errors.New("autocodePutUid statusCode not found")
+}
+
+type response struct {
+	Size int              `json:"size"`
+	Data []responseReport `json:"data"`
+}
+type responseReport struct {
+	VehicleId  string `json:"vehicle_id"`
+	ProgressOk int    `json:"progress_ok"`
+	Content    struct {
+		Identifiers struct {
+			Vehicle struct {
+				Vin    string `json:"vin"`
+				Body   string `json:"body"`
+				RegNum string `json:"reg_num"`
+			} `json:"vehicle"`
+			Manufacture struct {
+				Vin string `json:"vin,omitempty"`
+			} `json:"manufacture"`
+		} `json:"identifiers"`
+	} `json:"content"`
+	TechData struct {
+		Brand struct {
+			Name struct {
+				Normalized string `json:"normalized"`
+			} `json:"name"`
+		} `json:"brand"`
+		Model struct {
+			Name struct {
+				Normalized string `json:"normalized"`
+			} `json:"name"`
+		} `json:"model"`
+		Year string `json:"year"`
+	} `json:"tech_data"`
 }
 
 // find and put report by uid into vin (api request)
@@ -126,8 +156,8 @@ func (s *VinService) autocodePutReport(c *http.Client, vin *model.Vin) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(*autocodeUid)
 
+	// получить report с трех попыток (интервал 2 секунды) или вернуть ошибку
 	for i := 1; i < 3; i++ {
 		statusCode, body, err := helper.SendRequest(c, http.MethodGet,
 			fmt.Sprintf("https://b2b-api.spectrumdata.ru/b2b/api/v1/user/reports/%s?_content=true", *autocodeUid),
@@ -136,44 +166,57 @@ func (s *VinService) autocodePutReport(c *http.Client, vin *model.Vin) error {
 		)
 		// big error (fake domen)
 		if err != nil {
-			errMessage := err.Error()
-			vin.ResponseError = &errMessage
-			vin.StatusId = model.VinStatuses.SendError
-			saveErr := s.store.Vin().Save(vin)
-			if saveErr != nil {
-				return saveErr
-			}
-			return err
+			return s.saveError(vin, vin.Response, err)
 		}
 		// error 400, 500
 		if *statusCode != 200 {
-			response := string(*body)
-			errMessage := fmt.Sprintf("%d", *statusCode) + ": get uid request error"
-			vin.Response = &response
-			vin.ResponseError = &errMessage
-			vin.StatusId = model.VinStatuses.SendError
-			saveErr := s.store.Vin().Save(vin)
-			if saveErr != nil {
-				return saveErr
-			}
-			return errors.New(errMessage)
+			responseJson := string(*body)
+			responseError := fmt.Sprintf("%d", *statusCode) + ": autocodePutReport request error"
+			return s.saveError(vin, &responseJson, errors.New(responseError))
 		}
 		// success 200
 		if *statusCode == 200 {
+			r := response{}
 			response := string(*body)
+			err := json.Unmarshal([]byte(*body), &r)
+			if err != nil {
+				return s.saveError(vin, &response, err)
+			}
+			// если результат еще не получен, подождать 2 секунды и проверить
+			if r.Size == 0 || r.Data[0].ProgressOk == 0 {
+				time.Sleep(2 * time.Second)
+				continue
+			}
+			var vin2 *string = nil
+			if r.Data[0].Content.Identifiers.Manufacture.Vin != "" {
+				vin2 = &r.Data[0].Content.Identifiers.Manufacture.Vin
+			}
 			vin.Response = &response
 			vin.ResponseError = nil
 			vin.StatusId = model.VinStatuses.Success
-			// парсинг response, выделение vin, mark и других данных
+			vin.Vin = &r.Data[0].Content.Identifiers.Vehicle.Vin
+			vin.Vin2 = vin2
+			// выделение vin, mark и других данных
 			// ....
 			saveErr := s.store.Vin().Save(vin)
 			if saveErr != nil {
 				return saveErr
 			}
-			// если данные еще не найдены 
-			time.Sleep(2 * time.Second)
+			return nil
 		}
 	}
 
-	return nil
+	return errors.New("autocodePutReport not found")
+}
+
+func (s *VinService) saveError(vin *model.Vin, response *string, err error) error {
+	responseError := err.Error()
+	vin.Response = response
+	vin.ResponseError = &responseError
+	vin.StatusId = model.VinStatuses.SendError
+	saveErr := s.store.Vin().Save(vin)
+	if saveErr != nil {
+		return saveErr
+	}
+	return err
 }
