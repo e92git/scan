@@ -30,11 +30,11 @@ func (s *VinService) VinByPlate(plate string, authorUserId int64) (*model.Vin, e
 	}
 
 	// return if found
-	if vin.IsSuccessStatus() || vin.IsErrorStatus() {
+	if vin.IsSuccessStatus() {
 		return vin, nil
 	}
 
-	// find vin
+	// find vin in autocode
 	err = s.autocodePutVin(vin)
 	if err != nil {
 		return nil, err
@@ -51,6 +51,14 @@ func (s *VinService) FirstOrCreate(plate string, authorUserId int64) (*model.Vin
 	}
 
 	return newVin, s.store.Vin().FirstOrCreate(newVin)
+}
+
+func (s *VinService) StatusFirst(id int) (*model.VinStatus, error) {
+	newVinStatus := &model.VinStatus{
+		ID:        id,
+	}
+
+	return newVinStatus, s.store.Vin().StatusFirst(newVinStatus)
 }
 
 //
@@ -221,17 +229,20 @@ func (s *VinService) saveSuccess(vin *model.Vin, r *response) error {
 	if r.Data[0].Content.TechData.Year != 0 {
 		year = &r.Data[0].Content.TechData.Year
 	}
+	var err error
 	var markId *int = nil
+	var mark *model.CarMark = nil
 	if r.Data[0].Content.TechData.Brand.Name.Normalized != "" {
-		mark, err := s.carService.FirstOrCreateMark(r.Data[0].Content.TechData.Brand.Name.Normalized)
+		mark, err = s.carService.FirstOrCreateMark(r.Data[0].Content.TechData.Brand.Name.Normalized)
 		if err != nil {
 			return err
 		}
 		markId = &mark.ID
 	}
 	var modelId *int = nil
+	var carModel *model.CarModel = nil
 	if markId != nil && r.Data[0].Content.TechData.Model.Name.Normalized != "" {
-		carModel, err := s.carService.FirstOrCreateModel(*markId, r.Data[0].Content.TechData.Model.Name.Normalized)
+		carModel, err = s.carService.FirstOrCreateModel(*markId, r.Data[0].Content.TechData.Model.Name.Normalized)
 		if err != nil {
 			return err
 		}
@@ -249,6 +260,28 @@ func (s *VinService) saveSuccess(vin *model.Vin, r *response) error {
 	saveErr := s.store.Vin().Save(vin)
 	if saveErr != nil {
 		return saveErr
+	}
+
+	// load data
+	if vin.Author == nil {
+		author, err := s.store.User().First(vin.AuthorUserId)
+		if err != nil {
+			return err
+		}
+		vin.Author = author
+	}
+	if vin.Status == nil {
+		status, err := s.StatusFirst(vin.StatusId)
+		if err != nil {
+			return err
+		}
+		vin.Status = status
+	}
+	if mark != nil {
+		vin.Mark = mark
+	}
+	if carModel != nil {
+		vin.Model = carModel
 	}
 
 	// успешный выход

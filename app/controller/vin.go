@@ -13,7 +13,7 @@ type VinByPlateRequest struct {
 // @Accept       json
 // @Produce      json
 // @Param 		 vin body VinByPlateRequest true "Распознать по госномеру"
-// @Success      200  {array}   model.Vin
+// @Success      200  {object}   model.Vin
 // @Failure      400  {object}  controller.ActionError
 // @Router       /vin [post]
 // @Security 	 ApiKeyAuth

@@ -3,11 +3,11 @@ package model
 import "time"
 
 type User struct {
-	ID        int64   `json:"id" example:"234"`
-	Name      string  `json:"name" example:"ivan_v"`
-	Role      string  `json:"role" example:"client" enums:"client,show_api,manager,admin"`
-	Session   *string `json:"session" example:""`
-	CreatedAt time.Time  `json:"created_at" example:"2022-07-23 11:23:55"`
+	ID        int64     `json:"id" example:"234"`
+	Name      string    `json:"name" example:"ivan_v"`
+	Role      string    `json:"role" example:"client" enums:"client,show_api,manager,admin"`
+	Session   *string   `json:"-" example:""`
+	CreatedAt time.Time `json:"-" example:"2022-07-23 11:23:55.999"`
 }
 
 var UserRoles = struct {

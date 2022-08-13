@@ -33,6 +33,32 @@ definitions:
     required:
     - plate
     type: object
+  model.CarMark:
+    properties:
+      id:
+        example: 12
+        type: integer
+      name:
+        example: Toyota
+        type: string
+    required:
+    - name
+    type: object
+  model.CarModel:
+    properties:
+      id:
+        example: 123
+        type: integer
+      mark_id:
+        example: 12
+        type: integer
+      name:
+        example: Prius
+        type: string
+    required:
+    - mark_id
+    - name
+    type: object
   model.Location:
     properties:
       code:
@@ -71,26 +97,40 @@ definitions:
     - scanned_at
     - user_id
     type: object
-  model.Vin:
+  model.User:
     properties:
-      author_user_id:
+      id:
         example: 234
         type: integer
+      name:
+        example: ivan_v
+        type: string
+      role:
+        enum:
+        - client
+        - show_api
+        - manager
+        - admin
+        example: client
+        type: string
+    type: object
+  model.Vin:
+    properties:
+      author:
+        $ref: '#/definitions/model.User'
       body:
         example: KGC100005240
         type: string
       created_at:
-        example: "2022-07-28T11:23:55+07:00"
+        example: "2022-07-28T11:23:55.999+07:00"
         type: string
       id:
         example: 7635
         type: integer
-      mark_id:
-        example: 23
-        type: integer
-      model_id:
-        example: 231
-        type: integer
+      mark:
+        $ref: '#/definitions/model.CarMark'
+      model:
+        $ref: '#/definitions/model.CarModel'
       plate:
         example: О245КМ142
         type: string
@@ -98,13 +138,12 @@ definitions:
         example: '{...}'
         type: string
       response_error:
-        example: "400"
+        example: '400: bad request'
         type: string
-      status_id:
-        example: 3
-        type: integer
+      status:
+        $ref: '#/definitions/model.VinStatus'
       updated_at:
-        example: "2022-07-23T11:23:55+07:00"
+        example: "2022-07-23T11:23:55.999+07:00"
         type: string
       vin:
         example: XTA219170K0330071
@@ -116,9 +155,18 @@ definitions:
         example: 2012
         type: integer
     required:
-    - author_user_id
+    - author
     - plate
-    - status_id
+    - status
+    type: object
+  model.VinStatus:
+    properties:
+      id:
+        example: 4
+        type: integer
+      name:
+        example: Результат успешно получен
+        type: string
     type: object
 info:
   contact: {}
@@ -194,9 +242,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.Vin'
-            type: array
+            $ref: '#/definitions/model.Vin'
         "400":
           description: Bad Request
           schema:

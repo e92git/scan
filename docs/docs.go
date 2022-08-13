@@ -126,10 +126,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Vin"
-                            }
+                            "$ref": "#/definitions/model.Vin"
                         }
                     },
                     "400": {
@@ -190,6 +187,43 @@ const docTemplate = `{
                 }
             }
         },
+        "model.CarMark": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 12
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Toyota"
+                }
+            }
+        },
+        "model.CarModel": {
+            "type": "object",
+            "required": [
+                "mark_id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 123
+                },
+                "mark_id": {
+                    "type": "integer",
+                    "example": 12
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Prius"
+                }
+            }
+        },
         "model.Location": {
             "type": "object",
             "properties": {
@@ -242,17 +276,39 @@ const docTemplate = `{
                 }
             }
         },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 234
+                },
+                "name": {
+                    "type": "string",
+                    "example": "ivan_v"
+                },
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "client",
+                        "show_api",
+                        "manager",
+                        "admin"
+                    ],
+                    "example": "client"
+                }
+            }
+        },
         "model.Vin": {
             "type": "object",
             "required": [
-                "author_user_id",
+                "author",
                 "plate",
-                "status_id"
+                "status"
             ],
             "properties": {
-                "author_user_id": {
-                    "type": "integer",
-                    "example": 234
+                "author": {
+                    "$ref": "#/definitions/model.User"
                 },
                 "body": {
                     "type": "string",
@@ -260,19 +316,17 @@ const docTemplate = `{
                 },
                 "created_at": {
                     "type": "string",
-                    "example": "2022-07-28T11:23:55+07:00"
+                    "example": "2022-07-28T11:23:55.999+07:00"
                 },
                 "id": {
                     "type": "integer",
                     "example": 7635
                 },
-                "mark_id": {
-                    "type": "integer",
-                    "example": 23
+                "mark": {
+                    "$ref": "#/definitions/model.CarMark"
                 },
-                "model_id": {
-                    "type": "integer",
-                    "example": 231
+                "model": {
+                    "$ref": "#/definitions/model.CarModel"
                 },
                 "plate": {
                     "type": "string",
@@ -284,15 +338,14 @@ const docTemplate = `{
                 },
                 "response_error": {
                     "type": "string",
-                    "example": "400"
+                    "example": "400: bad request"
                 },
-                "status_id": {
-                    "type": "integer",
-                    "example": 3
+                "status": {
+                    "$ref": "#/definitions/model.VinStatus"
                 },
                 "updated_at": {
                     "type": "string",
-                    "example": "2022-07-23T11:23:55+07:00"
+                    "example": "2022-07-23T11:23:55.999+07:00"
                 },
                 "vin": {
                     "type": "string",
@@ -305,6 +358,19 @@ const docTemplate = `{
                 "year": {
                     "type": "integer",
                     "example": 2012
+                }
+            }
+        },
+        "model.VinStatus": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 4
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Результат успешно получен"
                 }
             }
         }

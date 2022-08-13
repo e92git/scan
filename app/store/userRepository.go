@@ -16,6 +16,13 @@ func (r *UserRepository) FindBySession(session string) (*model.User, error) {
 	return u, res.Error
 }
 
+// First ...
+func (r *UserRepository) First(id int64) (*model.User, error) {
+	u := &model.User{ID: id}
+	res := r.store.db.First(u)
+	return u, res.Error
+}
+
 // // Create ...
 // func (r *UserRepository) Create(u *model.User) error {
 // 	if err := u.Validate(); err != nil {
