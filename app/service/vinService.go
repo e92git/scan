@@ -12,12 +12,14 @@ import (
 )
 
 type VinService struct {
-	store *store.Store
+	store      *store.Store
+	carService *CarService
 }
 
-func NewVin(store *store.Store) *VinService {
+func NewVin(store *store.Store, carService *CarService) *VinService {
 	return &VinService{
-		store: store,
+		store:      store,
+		carService: carService,
 	}
 }
 
@@ -46,8 +48,6 @@ func (s *VinService) FirstOrCreate(plate string, authorUserId int64) (*model.Vin
 		Plate:        plate,
 		AuthorUserId: authorUserId,
 		StatusId:     model.VinStatuses.Created,
-		UpdatedAt:    time.Now(),
-		CreatedAt:    time.Now(),
 	}
 
 	return newVin, s.store.Vin().FirstOrCreate(newVin)
@@ -134,20 +134,20 @@ type responseReport struct {
 				Vin string `json:"vin,omitempty"`
 			} `json:"manufacture"`
 		} `json:"identifiers"`
+		TechData struct {
+			Brand struct {
+				Name struct {
+					Normalized string `json:"normalized"`
+				} `json:"name"`
+			} `json:"brand"`
+			Model struct {
+				Name struct {
+					Normalized string `json:"normalized"`
+				} `json:"name"`
+			} `json:"model"`
+			Year int `json:"year"`
+		} `json:"tech_data"`
 	} `json:"content"`
-	TechData struct {
-		Brand struct {
-			Name struct {
-				Normalized string `json:"normalized"`
-			} `json:"name"`
-		} `json:"brand"`
-		Model struct {
-			Name struct {
-				Normalized string `json:"normalized"`
-			} `json:"name"`
-		} `json:"model"`
-		Year string `json:"year"`
-	} `json:"tech_data"`
 }
 
 // find and put report by uid into vin (api request)
@@ -157,8 +157,11 @@ func (s *VinService) autocodePutReport(c *http.Client, vin *model.Vin) error {
 		return err
 	}
 
-	// получить report с трех попыток (интервал 2 секунды) или вернуть ошибку
-	for i := 1; i < 3; i++ {
+	var maxAttempts int = 3
+	var interval time.Duration = 2 * time.Second
+
+	// получить report с трех попыток
+	for i := 1; i <= maxAttempts; i++ {
 		statusCode, body, err := helper.SendRequest(c, http.MethodGet,
 			fmt.Sprintf("https://b2b-api.spectrumdata.ru/b2b/api/v1/user/reports/%s?_content=true", *autocodeUid),
 			nil,
@@ -176,37 +179,80 @@ func (s *VinService) autocodePutReport(c *http.Client, vin *model.Vin) error {
 		}
 		// success 200
 		if *statusCode == 200 {
+			responseString := string(*body)
 			r := response{}
-			response := string(*body)
 			err := json.Unmarshal([]byte(*body), &r)
 			if err != nil {
-				return s.saveError(vin, &response, err)
+				return s.saveError(vin, &responseString, err)
 			}
-			// если результат еще не получен, подождать 2 секунды и проверить
+
+			// если результат еще не получен, подождать 2 секунды и проверить еще раз
 			if r.Size == 0 || r.Data[0].ProgressOk == 0 {
-				time.Sleep(2 * time.Second)
+				time.Sleep(interval)
 				continue
 			}
-			var vin2 *string = nil
-			if r.Data[0].Content.Identifiers.Manufacture.Vin != "" {
-				vin2 = &r.Data[0].Content.Identifiers.Manufacture.Vin
-			}
-			vin.Response = &response
-			vin.ResponseError = nil
-			vin.StatusId = model.VinStatuses.Success
-			vin.Vin = &r.Data[0].Content.Identifiers.Vehicle.Vin
-			vin.Vin2 = vin2
-			// выделение vin, mark и других данных
-			// ....
-			saveErr := s.store.Vin().Save(vin)
-			if saveErr != nil {
-				return saveErr
-			}
-			return nil
+
+			vin.Response = &responseString
+			return s.saveSuccess(vin, &r)
 		}
 	}
 
 	return errors.New("autocodePutReport not found")
+}
+
+func (s *VinService) saveSuccess(vin *model.Vin, r *response) error {
+	if len(r.Data) == 0 {
+		return errors.New("saveSuccess response is empty")
+	}
+
+	var vin1 *string = nil
+	if r.Data[0].Content.Identifiers.Vehicle.Vin != "" {
+		vin1 = &r.Data[0].Content.Identifiers.Vehicle.Vin
+	}
+	var vin2 *string = nil
+	if r.Data[0].Content.Identifiers.Manufacture.Vin != "" {
+		vin2 = &r.Data[0].Content.Identifiers.Manufacture.Vin
+	}
+	var body *string = nil
+	if r.Data[0].Content.Identifiers.Vehicle.Body != "" {
+		body = &r.Data[0].Content.Identifiers.Vehicle.Body
+	}
+	var year *int = nil
+	if r.Data[0].Content.TechData.Year != 0 {
+		year = &r.Data[0].Content.TechData.Year
+	}
+	var markId *int = nil
+	if r.Data[0].Content.TechData.Brand.Name.Normalized != "" {
+		mark, err := s.carService.FirstOrCreateMark(r.Data[0].Content.TechData.Brand.Name.Normalized)
+		if err != nil {
+			return err
+		}
+		markId = &mark.ID
+	}
+	var modelId *int = nil
+	if markId != nil && r.Data[0].Content.TechData.Model.Name.Normalized != "" {
+		carModel, err := s.carService.FirstOrCreateModel(*markId, r.Data[0].Content.TechData.Model.Name.Normalized)
+		if err != nil {
+			return err
+		}
+		modelId = &carModel.ID
+	}
+
+	vin.ResponseError = nil
+	vin.StatusId = model.VinStatuses.Success
+	vin.Vin = vin1
+	vin.Vin2 = vin2
+	vin.Body = body
+	vin.Year = year
+	vin.MarkId = markId
+	vin.ModelId = modelId
+	saveErr := s.store.Vin().Save(vin)
+	if saveErr != nil {
+		return saveErr
+	}
+
+	// успешный выход
+	return nil
 }
 
 func (s *VinService) saveError(vin *model.Vin, response *string, err error) error {

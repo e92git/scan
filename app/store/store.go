@@ -11,6 +11,8 @@ type Store struct {
 	locationRepository *LocationRepository
 	scanRepository     *ScanRepository
 	vinRepository      *VinRepository
+	carMarkRepository  *CarMarkRepository
+	carModelRepository *CarModelRepository
 }
 
 // New ...
@@ -62,4 +64,26 @@ func (s *Store) Vin() *VinRepository {
 		store: s,
 	}
 	return s.vinRepository
+}
+
+// CarMark ...
+func (s *Store) CarMark() *CarMarkRepository {
+	if s.carMarkRepository != nil {
+		return s.carMarkRepository
+	}
+	s.carMarkRepository = &CarMarkRepository{
+		store: s,
+	}
+	return s.carMarkRepository
+}
+
+// CarModel ...
+func (s *Store) CarModel() *CarModelRepository {
+	if s.carModelRepository != nil {
+		return s.carModelRepository
+	}
+	s.carModelRepository = &CarModelRepository{
+		store: s,
+	}
+	return s.carModelRepository
 }

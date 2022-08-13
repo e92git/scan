@@ -22,7 +22,9 @@ type Vin struct {
 	UpdatedAt     time.Time `json:"updated_at" example:"2022-07-23T11:23:55+07:00"`
 	CreatedAt     time.Time `json:"created_at" example:"2022-07-28T11:23:55+07:00"`
 
-	Author *User `json:"-" gorm:"foreignKey:AuthorUserId"`
+	Author *User     `json:"-" gorm:"foreignKey:AuthorUserId"`
+	Mark   *CarMark  `json:"-" gorm:"foreignKey:MarkId"`
+	Model  *CarModel `json:"-" gorm:"foreignKey:ModelId"`
 }
 
 type responseItem struct {
