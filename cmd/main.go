@@ -36,12 +36,13 @@ func main() {
 		// without user
 		v1.GET("/locations", c.GetLocations)
 
+		// auth User
 		v1.Use(c.Auth())
 
-		// user + show_api middleware
+		// "show_api" middleware
 		v1.Use(c.ShowApiMiddleware())
 
-		// user + show_api middleware
+		// "manager" middleware
 		v1.Use(c.ManagerMiddleware())
 		v1.POST("/scan", c.AddScan)
 		v1.POST("/vin", c.VinByPlate)

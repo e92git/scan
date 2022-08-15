@@ -34,7 +34,7 @@ func (c *Config) Auth() gin.HandlerFunc {
 	}
 }
 
-// Middleware ShowApi
+// ShowApiMiddleware
 func (c *Config) ShowApiMiddleware() gin.HandlerFunc {
 	return func(g *gin.Context) {
 		user, err := c.GetCurrentUser(g)
@@ -52,7 +52,7 @@ func (c *Config) ShowApiMiddleware() gin.HandlerFunc {
 	}
 }
 
-// Middleware Manager
+// ManagerMiddleware
 func (c *Config) ManagerMiddleware() gin.HandlerFunc {
 	return func(g *gin.Context) {
 		user, err := c.GetCurrentUser(g)
