@@ -302,9 +302,7 @@ const docTemplate = `{
         "model.Vin": {
             "type": "object",
             "required": [
-                "author",
-                "plate",
-                "status"
+                "plate"
             ],
             "properties": {
                 "author": {

@@ -155,9 +155,7 @@ definitions:
         example: 2012
         type: integer
     required:
-    - author
     - plate
-    - status
     type: object
   model.VinStatus:
     properties:

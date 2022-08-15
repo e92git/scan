@@ -24,6 +24,10 @@ go mod tidy
 go build cmd/main.go
 supervisorctl restart scan
 
+---
+Scan Bulk - 
+https://betterprogramming.pub/how-to-bulk-create-and-update-the-right-way-in-golang-part-i-e15a8e5585d1 пункт 3
+---
 
 -LOG:
 /var/log/supervisor/scan.log - лог работы main.go
