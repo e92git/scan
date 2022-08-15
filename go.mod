@@ -12,7 +12,6 @@ require (
 	github.com/swaggo/swag v1.8.4
 	gorm.io/driver/mysql v1.3.5
 	gorm.io/gorm v1.23.8
-	rsc.io/quote v1.5.2
 )
 
 require (
@@ -46,5 +45,4 @@ require (
 	golang.org/x/tools v0.1.12 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	rsc.io/sampler v1.99.99 // indirect
 )
