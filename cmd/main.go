@@ -45,6 +45,7 @@ func main() {
 		// "manager" middleware
 		v1.Use(c.ManagerMiddleware())
 		v1.POST("/scan", c.AddScan)
+		v1.POST("/scan_bulk", c.AddScanBulk)
 		v1.POST("/vin", c.VinByPlate)
 	}
 

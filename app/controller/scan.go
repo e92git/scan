@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,16 +39,27 @@ func (c *Config) AddScan(g *gin.Context) {
 	c.respond(g, res)
 }
 
-// func (c *Config) AddScanGet(g *gin.Context) {
-// 	newScan, err := c.service.Scan().Create(
-// 		g.Query("place"),
-// 		g.Query("plate"),
-// 		g.Query("datetime"),
-// 	)
-// 	if err != nil {
-// 		c.error(g, err)
-// 		return
-// 	}
+type AddScanBulkRequest struct {
+	LocationId   int    `json:"location_id" example:"1" validate:"required"`
+	PlateAndDate string `json:"plate_and_date" example:"Т237АС142	2022-07-06 10:31:12 Т182АС142	2022-07-06 10:29:40" validate:"required"`
+}
 
-// 	c.respond(g, newScan)
-// }
+func (c *Config) AddScanBulk(g *gin.Context) {
+	req := &AddScanBulkRequest{}
+	user, err := c.initRequest(g, req)
+	if err != nil {
+		c.error(g, err)
+		return
+	}
+
+	res := "ff"
+	fmt.Println(user)
+
+	// res, err := c.service.Scan().AddScanWithPrepare(req.Place, req.Plate, req.ScannedAt, user.ID)
+	// if err != nil {
+	// 	c.error(g, err)
+	// 	return
+	// }
+
+	c.respond(g, res)
+}

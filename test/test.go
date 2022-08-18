@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+    "github.com/thoas/go-funk"
 )
 
 const refString = "Н832МО124"
@@ -12,6 +13,12 @@ const refString = "Н832МО124"
 // для тестирования способностей языка го. Для запуска:
 // > go run test/test.go
 func main() {
+	// разбитие на bulk массивы
+	t := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	tt := funk.Chunk(t, 3)
+	tt2 := tt.([][]int)
+	println("chunk size =", len(tt2), "; elem = ", tt2[2][1])
+
 	// строковые и регулярные выражения
 	out := strings.ToUpper(refString)
 	replacer := strings.NewReplacer("А", "A", "В", "B", "Е", "E", "К", "K", "М", "M", "Н", "H", "О", "O", "Р", "P", "С", "C", "Т", "T", "У", "Y", "Х", "X")
