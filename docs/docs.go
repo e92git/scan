@@ -94,6 +94,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/scan_batches": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Сканирование"
+                ],
+                "summary": "Добавить отсканированные номера пачкой",
+                "parameters": [
+                    {
+                        "description": "Добавить сканирование",
+                        "name": "scan",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.AddScanBatchesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ActionError"
+                        }
+                    }
+                }
+            }
+        },
         "/vin": {
             "post": {
                 "security": [
@@ -150,6 +191,25 @@ const docTemplate = `{
                 "url": {
                     "type": "string",
                     "example": "scan.e92.ru/api/v1/scan"
+                }
+            }
+        },
+        "controller.AddScanBatchesRequest": {
+            "type": "object",
+            "required": [
+                "data",
+                "location_id"
+            ],
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/service.Scans"
+                    }
+                },
+                "location_id": {
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },
@@ -245,7 +305,6 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "location_id",
-                "plate",
                 "scanned_at",
                 "user_id"
             ],
@@ -301,9 +360,6 @@ const docTemplate = `{
         },
         "model.Vin": {
             "type": "object",
-            "required": [
-                "plate"
-            ],
             "properties": {
                 "author": {
                     "$ref": "#/definitions/model.User"
@@ -369,6 +425,23 @@ const docTemplate = `{
                 "name": {
                     "type": "string",
                     "example": "Результат успешно получен"
+                }
+            }
+        },
+        "service.Scans": {
+            "type": "object",
+            "required": [
+                "date",
+                "plate"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "example": "2022-07-06 10:31:12"
+                },
+                "plate": {
+                    "type": "string",
+                    "example": "Т237АС142"
                 }
             }
         }

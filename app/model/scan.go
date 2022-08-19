@@ -7,7 +7,7 @@ import (
 type Scan struct {
 	ID         int64     `json:"id" example:"76352"`
 	LocationId int64     `json:"location_id" example:"12" validate:"required"`
-	Plate      string    `json:"plate" example:"О245КМ142" validate:"required"`
+	Plate      string    `json:"plate" example:"О245КМ142" validate:"required|regex:^[A-Z0-9]+$"`
 	UserId     int64     `json:"user_id" example:"234" validate:"required"`
 	ScannedAt  time.Time `json:"scanned_at" example:"2022-07-29T11:23:55+07:00" validate:"required"`
 	CreatedAt  time.Time `json:"created_at" example:"2022-08-04T12:23:52.372+07:00"`

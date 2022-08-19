@@ -8,7 +8,7 @@ import (
 
 type Vin struct {
 	ID            int64     `json:"id" example:"7635"`
-	Plate         string    `json:"plate" example:"О245КМ142" validate:"required"`
+	Plate         string    `json:"plate" example:"О245КМ142" validate:"required|regex:^[A-Z0-9]+$"`
 	Vin           *string   `json:"vin" example:"XTA219170K0330071"`
 	Vin2          *string   `json:"vin2" example:"XTA219170K0330071"`
 	Body          *string   `json:"body" example:"KGC100005240"`

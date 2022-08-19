@@ -9,6 +9,19 @@ definitions:
         example: scan.e92.ru/api/v1/scan
         type: string
     type: object
+  controller.AddScanBatchesRequest:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/service.Scans'
+        type: array
+      location_id:
+        example: 1
+        type: integer
+    required:
+    - data
+    - location_id
+    type: object
   controller.AddScanRequest:
     properties:
       place:
@@ -93,7 +106,6 @@ definitions:
         type: integer
     required:
     - location_id
-    - plate
     - scanned_at
     - user_id
     type: object
@@ -154,8 +166,6 @@ definitions:
       year:
         example: 2012
         type: integer
-    required:
-    - plate
     type: object
   model.VinStatus:
     properties:
@@ -165,6 +175,18 @@ definitions:
       name:
         example: Результат успешно получен
         type: string
+    type: object
+  service.Scans:
+    properties:
+      date:
+        example: "2022-07-06 10:31:12"
+        type: string
+      plate:
+        example: Т237АС142
+        type: string
+    required:
+    - date
+    - plate
     type: object
 info:
   contact: {}
@@ -221,6 +243,31 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Добавить отсканированный номер
+      tags:
+      - Сканирование
+  /scan_batches:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Добавить сканирование
+        in: body
+        name: scan
+        required: true
+        schema:
+          $ref: '#/definitions/controller.AddScanBatchesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ActionError'
+      security:
+      - ApiKeyAuth: []
+      summary: Добавить отсканированные номера пачкой
       tags:
       - Сканирование
   /vin:

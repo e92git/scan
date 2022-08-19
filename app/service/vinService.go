@@ -24,7 +24,6 @@ func NewVin(store *store.Store, carService *CarService) *VinService {
 }
 
 func (s *VinService) VinByPlate(plate string, authorUserId int64) (*model.Vin, error) {
-	plate = helper.ClearPlate(plate)
 	vin, err := s.FirstOrCreate(plate, authorUserId)
 	if err != nil {
 		return nil, err
@@ -46,7 +45,7 @@ func (s *VinService) VinByPlate(plate string, authorUserId int64) (*model.Vin, e
 
 func (s *VinService) FirstOrCreate(plate string, authorUserId int64) (*model.Vin, error) {
 	newVin := &model.Vin{
-		Plate:        plate,
+		Plate:        helper.ClearPlate(plate),
 		AuthorUserId: authorUserId,
 		StatusId:     model.VinStatuses.Created,
 	}

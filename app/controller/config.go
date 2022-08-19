@@ -61,6 +61,9 @@ func (c *Config) initRequest(g *gin.Context, req any) (*model.User, error) {
 }
 
 func (c *Config) respond(g *gin.Context, obj any) {
+	if obj == nil {
+		obj = map[string]string{"message":"success"}
+	}
 	g.IndentedJSON(http.StatusOK, obj)
 }
 

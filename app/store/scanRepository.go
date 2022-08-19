@@ -38,6 +38,17 @@ func (r *ScanRepository) First(s *model.Scan) error {
 	return res.Error
 }
 
+// CreateInBatches
+func (r* ScanRepository) CreateInBatches(s *[]model.Scan) error  {
+	for _, scan := range *s {
+		v := validate.Struct(scan)
+		if !v.Validate() {
+			return v.Errors
+		}
+	}
+	res := r.store.db.CreateInBatches(s, 1000)
+	return res.Error
+}
 
 // Create ...
 // func (r *ScanRepository) Create(s *model.Scan) error {

@@ -19,10 +19,6 @@ func NewScan(store *store.Store, locationService *LocationService) *ScanService 
 	}
 }
 
-// func (s *ScanService) CreateBulk(locationCode string, plate string, scannedAt string) (*model.Scan, error) {
-
-// }
-
 func (s *ScanService) AddScanWithPrepare(locationCode string, plate string, scannedAt string, userId int64) (*model.Scan, error) {
 	l, err := s.locationService.FindByCode(locationCode)
 	if err != nil {
@@ -40,7 +36,7 @@ func (s *ScanService) AddScanWithPrepare(locationCode string, plate string, scan
 func (s *ScanService) AddScan(locationId int64, plate string, scannedAt time.Time, userId int64) (*model.Scan, error) {
 	newScan := &model.Scan{
 		LocationId: locationId,
-		Plate:      plate,
+		Plate:      helper.ClearPlate(plate),
 		ScannedAt:  scannedAt,
 		UserId:     userId,
 	}
@@ -50,4 +46,27 @@ func (s *ScanService) AddScan(locationId int64, plate string, scannedAt time.Tim
 
 func (s *ScanService) Create(scan *model.Scan) error {
 	return s.store.Scan().Create(scan)
+}
+
+type Scans struct {
+	Plate string `json:"plate" example:"Т237АС142" validate:"required"`
+	Date  string `json:"date" example:"2022-07-06 10:31:12" validate:"required"`
+}
+
+// CreateInBatches
+func (s *ScanService) CreateInBatches(locationId int64, scans *[]Scans, userId int64) error {
+	var scanModels []model.Scan
+	for _, scan := range *scans {
+		scannedAt, err := helper.StrToTime(scan.Date)
+		if err != nil {
+			return err
+		}
+		scanModels = append(scanModels, model.Scan{
+			LocationId: locationId,
+			Plate:      helper.ClearPlate(scan.Plate),
+			ScannedAt:  scannedAt,
+			UserId:     userId,
+		})
+	}
+	return s.store.Scan().CreateInBatches(&scanModels)
 }
