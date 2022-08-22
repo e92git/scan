@@ -22,7 +22,6 @@ https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-
 -Мой Github deploy script:
 cd scan
 git pull
-go mod init scan
 go mod tidy
 go test scan/app/controller 
 go build cmd/main.go
