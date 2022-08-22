@@ -12,7 +12,7 @@ const refString = "Н832МО124"
 
 // для тестирования способностей языка го. Для запуска:
 // > go run test/test.go
-func main() {
+func main2() {
 	// разбитие на bulk массивы
 	t := []int{1, 2, 3, 4, 5, 6, 7, 8}
 	tt := funk.Chunk(t, 3)

@@ -10,6 +10,9 @@ go build cmd/main.go - создать exe файл проекта (/main.exe)
 -Swagger обновить:
 swag init -g cmd/main.go
 
+-Запустить тесты:
+go test scan/app/controller 
+
 -Автодеплой:
 https://github.com/e92git/scan/actions
 https://dev.to/miangame/how-to-automate-a-deploy-in-a-vps-with-github-actions-via-ssh-101e
