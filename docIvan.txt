@@ -24,6 +24,7 @@ cd scan
 git pull
 go mod init scan
 go mod tidy
+go test scan/app/controller 
 go build cmd/main.go
 supervisorctl restart scan
 
