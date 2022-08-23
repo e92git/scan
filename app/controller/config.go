@@ -19,7 +19,7 @@ type Config struct {
 	config  *apiserver.Config
 	store   *store.Store
 	service *service.Config
-	router  *gin.Engine
+	Server  *gin.Engine
 }
 
 // New controller
@@ -40,37 +40,23 @@ func New() (*Config, error) {
 		config:  config,
 		store:   store,
 		service: service.New(store),
-		router:  gin.Default(),
+		Server:  gin.Default(),
 	}
+
+	c.SetUpRouters()
 
 	return c, nil
 }
 
-// New controller for test
-func NewTest() (*Config, error) {
-	config := apiserver.NewConfig()
-	config.Dsn = "gen_user:0fgxqh8bc@tcp(85.193.83.246:3306)/default_db?charset=utf8mb4&parseTime=True&loc=Local"
-
-	db, err := apiserver.ConnectGorm(config.Dsn, config.LogLevel)
-	if err != nil {
-		return nil, err
-	}
-
-	store := store.New(db)
-
-	c := &Config{
-		config:  config,
-		store:   store,
-		service: service.New(store),
-		router:  gin.Default(),
-	}
-
-	return c, nil
+// New controller to test enviropment
+func NewTestEnv() (*Config, error) {
+	// TODO: change DSN to test DSN
+	return New()
 }
 
 func (c *Config) SetUpRouters() *gin.Engine {
-	c.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	v1 := c.router.Group("/api/v1")
+	c.Server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	v1 := c.Server.Group("/api/v1")
 	{
 		// without user
 		v1.GET("/locations", c.GetLocations)
@@ -88,11 +74,11 @@ func (c *Config) SetUpRouters() *gin.Engine {
 		v1.POST("/vin", c.VinByPlate)
 	}
 
-	return c.router
+	return c.Server
 }
 
 func (c *Config) RunServer() error {
-	return c.router.Run(c.Addr())
+	return c.Server.Run(c.Addr())
 }
 
 func (c *Config) Addr() string {

@@ -11,15 +11,10 @@ import (
 )
 
 func TestGetLocations(t *testing.T) {
-	c, err := NewTest()
-	if err != nil {
-		t.Error(err)
-	}
-
-	r := c.SetUpRouters()
+	c, _ := GetTestController()
 	req, _ := http.NewRequest("GET", "/api/v1/locations", nil)
 	w := httptest.NewRecorder()
-	r.ServeHTTP(w, req)
+	c.Server.ServeHTTP(w, req)
 
 	var locations []model.Location
 	json.Unmarshal(w.Body.Bytes(), &locations)

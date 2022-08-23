@@ -22,9 +22,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// all routers
-	c.SetUpRouters()
-
 	err = c.RunServer()
 	if err != nil {
 		log.Fatal(err)

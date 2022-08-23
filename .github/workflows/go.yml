@@ -32,7 +32,7 @@ jobs:
             cd scan
             git pull
             go mod tidy
-            go test scan/app/controller 
+            go test ./... 
             go build cmd/main.go
             supervisorctl restart scan
 

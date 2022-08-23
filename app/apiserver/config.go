@@ -21,9 +21,15 @@ func NewConfig() *Config {
 
 func LoadConfig() (*Config, error) {
 	config := NewConfig()
-	_, err := toml.DecodeFile(".env", config)
+	_, err := toml.DecodeFile("./.env", config)
 	if err != nil {
-		return nil, err
+		_, err := toml.DecodeFile("./../.env", config)
+		if err != nil {
+			_, err := toml.DecodeFile("./../../.env", config)
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
 
 	return config, nil

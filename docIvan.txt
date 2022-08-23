@@ -11,7 +11,8 @@ go build cmd/main.go - создать exe файл проекта (/main.exe)
 swag init -g cmd/main.go
 
 -Запустить тесты:
-go test scan/app/controller 
+go test ./...  // все
+go test scan/app/controller // конекретно
 
 -Автодеплой:
 https://github.com/e92git/scan/actions
