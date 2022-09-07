@@ -39,7 +39,7 @@ func (c *Config) AddScan(g *gin.Context) {
 	c.respond(g, res)
 }
 
-type AddScanBatchesRequest struct {
+type AddScanBulkRequest struct {
 	LocationId int64           `json:"location_id" example:"1" validate:"required"`
 	Data       []service.Scans `json:"data" validate:"required"`
 }
@@ -49,20 +49,20 @@ type AddScanBatchesRequest struct {
 // @Tags         Сканирование
 // @Accept       json
 // @Produce      json
-// @Param 		 scan body AddScanBatchesRequest true "Добавить сканирование"
-// @Success      200  
+// @Param 		 scan body AddScanBulkRequest true "Добавить сканирование"
+// @Success      200
 // @Failure      400  {object}  controller.ActionError
-// @Router       /scan_batches [post]
+// @Router       /scan/bulk [post]
 // @Security 	 ApiKeyAuth
-func (c *Config) AddScanBatches(g *gin.Context) {
-	req := &AddScanBatchesRequest{}
+func (c *Config) AddScanBulk(g *gin.Context) {
+	req := &AddScanBulkRequest{}
 	user, err := c.initRequest(g, req)
 	if err != nil {
 		c.error(g, err)
 		return
 	}
 
-	err = c.service.Scan().CreateInBatches(req.LocationId, &req.Data, user.ID)
+	err = c.service.Scan().CreateBulk(req.LocationId, &req.Data, user.ID)
 	if err != nil {
 		c.error(g, err)
 		return

@@ -23,10 +23,19 @@ func NewVin(store *store.Store, carService *CarService) *VinService {
 	}
 }
 
-func (s *VinService) VinByPlate(plate string, authorUserId int64) (*model.Vin, error) {
-	vin, err := s.FirstOrCreate(plate, authorUserId)
+func (s *VinService) VinByPlate(plate string, authorUserId int64, immediately bool) (*model.Vin, error) {
+	vin, err := s.FirstOrCreateByPlate(plate, authorUserId, immediately)
 	if err != nil {
 		return nil, err
+	}
+
+	// return if deferred search
+	if !immediately {
+		err = s.loadRelatives(vin)
+		if err != nil {
+			return nil, err
+		}
+		return vin, nil
 	}
 
 	// return if found
@@ -43,14 +52,32 @@ func (s *VinService) VinByPlate(plate string, authorUserId int64) (*model.Vin, e
 	return vin, nil
 }
 
-func (s *VinService) FirstOrCreate(plate string, authorUserId int64) (*model.Vin, error) {
+func (s *VinService) VinByPlateBulk(plates []string, authorUserId int64) ([]*model.Vin, error) {
+	var vins []*model.Vin
+	for _, plate := range plates {
+		vin, err := s.VinByPlate(plate, authorUserId, false)
+		if err != nil {
+			return nil, err
+		}
+
+		vins = append(vins, vin)
+	}
+
+	return vins, nil
+}
+
+func (s *VinService) FirstOrCreateByPlate(plate string, authorUserId int64, immediately bool) (*model.Vin, error) {
+	statusId := model.VinStatuses.Created
+	if !immediately {
+		statusId = model.VinStatuses.CreatedDeferred
+	}
 	newVin := &model.Vin{
 		Plate:        helper.ClearPlate(plate),
 		AuthorUserId: authorUserId,
-		StatusId:     model.VinStatuses.Created,
+		StatusId:     statusId,
 	}
 
-	return newVin, s.store.Vin().FirstOrCreate(newVin)
+	return newVin, s.store.Vin().FirstOrCreateByPlate(newVin)
 }
 
 func (s *VinService) StatusFirst(id int) (*model.VinStatus, error) {
@@ -208,6 +235,7 @@ func (s *VinService) autocodePutReport(c *http.Client, vin *model.Vin) error {
 	return errors.New("autocodePutReport not found")
 }
 
+// saveSuccess распарсить ответ r, занести в vin, сохранить vin в бд
 func (s *VinService) saveSuccess(vin *model.Vin, r *response) error {
 	if len(r.Data) == 0 {
 		return errors.New("saveSuccess response is empty")
@@ -257,12 +285,31 @@ func (s *VinService) saveSuccess(vin *model.Vin, r *response) error {
 	vin.Year = year
 	vin.MarkId = markId
 	vin.ModelId = modelId
+
+	// сохранить
 	saveErr := s.store.Vin().Save(vin)
 	if saveErr != nil {
 		return saveErr
 	}
 
 	// load data
+	if mark != nil {
+		vin.Mark = mark
+	}
+	if carModel != nil {
+		vin.Model = carModel
+	}
+	err = s.loadRelatives(vin)
+	if err != nil {
+		return err
+	}
+
+	// успешный выход
+	return nil
+}
+
+// loadRelatives загрузить Author и Status зависимости
+func (s *VinService) loadRelatives(vin *model.Vin) error{
 	if vin.Author == nil {
 		author, err := s.store.User().First(vin.AuthorUserId)
 		if err != nil {
@@ -277,14 +324,6 @@ func (s *VinService) saveSuccess(vin *model.Vin, r *response) error {
 		}
 		vin.Status = status
 	}
-	if mark != nil {
-		vin.Mark = mark
-	}
-	if carModel != nil {
-		vin.Model = carModel
-	}
-
-	// успешный выход
 	return nil
 }
 

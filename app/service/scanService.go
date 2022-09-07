@@ -53,8 +53,8 @@ type Scans struct {
 	Date  string `json:"date" example:"2022-07-06 10:31:12" validate:"required"`
 }
 
-// CreateInBatches
-func (s *ScanService) CreateInBatches(locationId int64, scans *[]Scans, userId int64) error {
+// CreateBulk
+func (s *ScanService) CreateBulk(locationId int64, scans *[]Scans, userId int64) error {
 	var scanModels []model.Scan
 	for _, scan := range *scans {
 		scannedAt, err := helper.StrToTime(scan.Date)
@@ -68,5 +68,5 @@ func (s *ScanService) CreateInBatches(locationId int64, scans *[]Scans, userId i
 			UserId:     userId,
 		})
 	}
-	return s.store.Scan().CreateInBatches(&scanModels)
+	return s.store.Scan().CreateBulk(&scanModels)
 }

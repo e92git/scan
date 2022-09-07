@@ -2,13 +2,13 @@ package store
 
 import (
 	"scan/app/model"
+
 	"github.com/gookit/validate"
 )
 
 type ScanRepository struct {
 	store *Store
 }
-
 
 // Create ...
 func (r *ScanRepository) Create(s *model.Scan) error {
@@ -38,8 +38,8 @@ func (r *ScanRepository) First(s *model.Scan) error {
 	return res.Error
 }
 
-// CreateInBatches
-func (r* ScanRepository) CreateInBatches(s *[]model.Scan) error  {
+// CreateBulk
+func (r *ScanRepository) CreateBulk(s *[]model.Scan) error {
 	for _, scan := range *s {
 		v := validate.Struct(scan)
 		if !v.Validate() {

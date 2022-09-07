@@ -1,16 +1,17 @@
 package store
 
 import (
-	"github.com/gookit/validate"
 	"scan/app/model"
+
+	"github.com/gookit/validate"
 )
 
 type VinRepository struct {
 	store *Store
 }
 
-// FirstOrCreate ...
-func (r *VinRepository) FirstOrCreate(m *model.Vin) error {
+// FirstOrCreateByPlate ...
+func (r *VinRepository) FirstOrCreateByPlate(m *model.Vin) error {
 	v := validate.Struct(m)
 	if !v.Validate() {
 		return v.Errors

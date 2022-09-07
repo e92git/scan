@@ -94,7 +94,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/scan_batches": {
+        "/scan/bulk": {
             "post": {
                 "security": [
                     {
@@ -118,7 +118,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.AddScanBatchesRequest"
+                            "$ref": "#/definitions/controller.AddScanBulkRequest"
                         }
                     }
                 ],
@@ -178,6 +178,53 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/vin/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Распознание"
+                ],
+                "summary": "Распознать vin и другие данные по госномеру пачкой",
+                "parameters": [
+                    {
+                        "description": "Распознать по госномерам",
+                        "name": "vin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.VinByPlateBulkRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Vin"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ActionError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -194,7 +241,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.AddScanBatchesRequest": {
+        "controller.AddScanBulkRequest": {
             "type": "object",
             "required": [
                 "data",
@@ -232,6 +279,24 @@ const docTemplate = `{
                 "scanned_at": {
                     "type": "string",
                     "example": "2022-07-23 11:23:55"
+                }
+            }
+        },
+        "controller.VinByPlateBulkRequest": {
+            "type": "object",
+            "required": [
+                "plate"
+            ],
+            "properties": {
+                "plate": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "M343TT123",
+                        "B345KY24"
+                    ]
                 }
             }
         },

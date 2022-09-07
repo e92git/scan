@@ -9,7 +9,7 @@ definitions:
         example: scan.e92.ru/api/v1/scan
         type: string
     type: object
-  controller.AddScanBatchesRequest:
+  controller.AddScanBulkRequest:
     properties:
       data:
         items:
@@ -37,6 +37,18 @@ definitions:
     - place
     - plate
     - scanned_at
+    type: object
+  controller.VinByPlateBulkRequest:
+    properties:
+      plate:
+        example:
+        - M343TT123
+        - B345KY24
+        items:
+          type: string
+        type: array
+    required:
+    - plate
     type: object
   controller.VinByPlateRequest:
     properties:
@@ -245,7 +257,7 @@ paths:
       summary: Добавить отсканированный номер
       tags:
       - Сканирование
-  /scan_batches:
+  /scan/bulk:
     post:
       consumes:
       - application/json
@@ -255,7 +267,7 @@ paths:
         name: scan
         required: true
         schema:
-          $ref: '#/definitions/controller.AddScanBatchesRequest'
+          $ref: '#/definitions/controller.AddScanBulkRequest'
       produces:
       - application/json
       responses:
@@ -295,6 +307,35 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Распознать vin и другие данные по госномеру
+      tags:
+      - Распознание
+  /vin/bulk:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Распознать по госномерам
+        in: body
+        name: vin
+        required: true
+        schema:
+          $ref: '#/definitions/controller.VinByPlateBulkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Vin'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ActionError'
+      security:
+      - ApiKeyAuth: []
+      summary: Распознать vin и другие данные по госномеру пачкой
       tags:
       - Распознание
 securityDefinitions:

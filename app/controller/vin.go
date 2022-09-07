@@ -7,6 +7,7 @@ import (
 type VinByPlateRequest struct {
 	Plate string `json:"plate" example:"M343TT123" validate:"required"`
 }
+
 // VinByPlate godoc
 // @Summary      Распознать vin и другие данные по госномеру
 // @Tags         Распознание
@@ -25,13 +26,44 @@ func (c *Config) VinByPlate(g *gin.Context) {
 		return
 	}
 
-	new, err := c.service.Vin().VinByPlate(req.Plate, user.ID)
+	new, err := c.service.Vin().VinByPlate(req.Plate, user.ID, true)
 	if err != nil {
 		c.error(g, err)
 		return
 	}
 
 	c.respond(g, new)
+}
+
+type VinByPlateBulkRequest struct {
+	Plates []string `json:"plate" example:"M343TT123,B345KY24" validate:"required"`
+}
+
+// VinByPlateBulk godoc
+// @Summary      Распознать vin и другие данные по госномеру пачкой
+// @Tags         Распознание
+// @Accept       json
+// @Produce      json
+// @Param 		 vin body VinByPlateBulkRequest true "Распознать по госномерам"
+// @Success      200  {array}   model.Vin
+// @Failure      400  {object}  controller.ActionError
+// @Router       /vin/bulk [post]
+// @Security 	 ApiKeyAuth
+func (c *Config) VinByPlateBulk(g *gin.Context) {
+	req := &VinByPlateBulkRequest{}
+	user, err := c.initRequest(g, req)
+	if err != nil {
+		c.error(g, err)
+		return
+	}
+
+	news, err := c.service.Vin().VinByPlateBulk(req.Plates, user.ID)
+	if err != nil {
+		c.error(g, err)
+		return
+	}
+
+	c.respond(g, news)
 }
 
 // Уже был найден ранее

@@ -70,8 +70,9 @@ func (c *Config) SetUpRouters() *gin.Engine {
 		// "manager" middleware
 		v1.Use(c.ManagerMiddleware())
 		v1.POST("/scan", c.AddScan)
-		v1.POST("/scan_batches", c.AddScanBatches)
+		v1.POST("/scan/bulk", c.AddScanBulk)
 		v1.POST("/vin", c.VinByPlate)
+		v1.POST("/vin/bulk", c.VinByPlateBulk)
 	}
 
 	return c.Server
@@ -85,6 +86,7 @@ func (c *Config) Addr() string {
 	return c.config.BindAddr
 }
 
+// initRequest получить юзера авторизованного и тело запроса в req
 func (c *Config) initRequest(g *gin.Context, req any) (*model.User, error) {
 	if err := g.BindJSON(req); err != nil {
 		return nil, err
