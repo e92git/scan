@@ -23,8 +23,10 @@ func NewVin(store *store.Store, carService *CarService) *VinService {
 	}
 }
 
+// VinByPlate получить или создать новую запись с поиском vin. 
+// Данные появятся сразу в ответе.
 func (s *VinService) VinByPlate(plate string, authorUserId int64, immediately bool) (*model.Vin, error) {
-	vin, err := s.FirstOrCreateByPlate(plate, authorUserId, immediately)
+	vin, err := s.firstOrCreateByPlate(plate, authorUserId, immediately)
 	if err != nil {
 		return nil, err
 	}
@@ -52,6 +54,8 @@ func (s *VinService) VinByPlate(plate string, authorUserId int64, immediately bo
 	return vin, nil
 }
 
+// VinByPlateBulk получить или создать массив новых записей с поиском vin. 
+// Данные появятся потом (по крону FindDeffered)
 func (s *VinService) VinByPlateBulk(plates []string, authorUserId int64) ([]*model.Vin, error) {
 	var vins []*model.Vin
 	for _, plate := range plates {
@@ -66,7 +70,32 @@ func (s *VinService) VinByPlateBulk(plates []string, authorUserId int64) ([]*mod
 	return vins, nil
 }
 
-func (s *VinService) FirstOrCreateByPlate(plate string, authorUserId int64, immediately bool) (*model.Vin, error) {
+// StatusFirst модель статуса по статус ид
+func (s *VinService) StatusFirst(id int) (*model.VinStatus, error) {
+	newVinStatus := &model.VinStatus{
+		ID: id,
+	}
+
+	return newVinStatus, s.store.Vin().StatusFirst(newVinStatus)
+}
+
+// PutDeffered найти отложенные поиски по госномеру (status_id=5)
+// func (s *VinService) FindDeffered(id int) (*model.VinStatus, error) {
+// 	vin := &model.Vin{
+// 		StatusId: model.VinStatuses.CreatedDeferred,
+// 	}
+
+// 	return newVinStatus, s.store.Vin().StatusFirst(newVinStatus)
+// }
+
+//
+// private
+//
+var constApiKey string = "AR-REST aV90cm9maW1vdl9pbnRlZ3JhdGlvbkBlOTI6MTY0MTQwMTEyMzo5OTk5OTk5OTk6VHBFcGRlMm5tdzVwcW0zbnExZ0o0dz09"
+
+// firstOrCreateByPlate создать пустую запись в таблице vin со статусом Created или CreatedDeferred 
+// или вернуть если уже есть по этому госномеру
+func (s *VinService) firstOrCreateByPlate(plate string, authorUserId int64, immediately bool) (*model.Vin, error) {
 	statusId := model.VinStatuses.Created
 	if !immediately {
 		statusId = model.VinStatuses.CreatedDeferred
@@ -79,19 +108,6 @@ func (s *VinService) FirstOrCreateByPlate(plate string, authorUserId int64, imme
 
 	return newVin, s.store.Vin().FirstOrCreateByPlate(newVin)
 }
-
-func (s *VinService) StatusFirst(id int) (*model.VinStatus, error) {
-	newVinStatus := &model.VinStatus{
-		ID: id,
-	}
-
-	return newVinStatus, s.store.Vin().StatusFirst(newVinStatus)
-}
-
-//
-// private
-//
-var constApiKey string = "AR-REST aV90cm9maW1vdl9pbnRlZ3JhdGlvbkBlOTI6MTY0MTQwMTEyMzo5OTk5OTk5OTk6VHBFcGRlMm5tdzVwcW0zbnExZ0o0dz09"
 
 // дополнить объект vin вин-кодом и др. данными (по грз vin.plate)
 func (s *VinService) autocodePutVin(vin *model.Vin) error {

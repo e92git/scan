@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"scan/app/controller"
+	"scan/app/helper/cron"
 )
 
 // @title           Дискаунтер автозачастей е92
@@ -22,6 +23,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// cron
+	cron.CronStart(c.GetService())
+
+	// server
 	err = c.RunServer()
 	if err != nil {
 		log.Fatal(err)

@@ -3,6 +3,7 @@ package controller
 import (
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"scan/app/apiserver"
 	"scan/app/model"
 	"scan/app/service"
@@ -19,7 +20,7 @@ type Config struct {
 	config  *apiserver.Config
 	store   *store.Store
 	service *service.Config
-	Server  *gin.Engine
+	server  *gin.Engine
 }
 
 // New controller
@@ -40,7 +41,7 @@ func New() (*Config, error) {
 		config:  config,
 		store:   store,
 		service: service.New(store),
-		Server:  gin.Default(),
+		server:  gin.Default(),
 	}
 
 	c.SetUpRouters()
@@ -55,8 +56,8 @@ func NewTestEnv() (*Config, error) {
 }
 
 func (c *Config) SetUpRouters() *gin.Engine {
-	c.Server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	v1 := c.Server.Group("/api/v1")
+	c.server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	v1 := c.server.Group("/api/v1")
 	{
 		// without user
 		v1.GET("/locations", c.GetLocations)
@@ -75,15 +76,25 @@ func (c *Config) SetUpRouters() *gin.Engine {
 		v1.POST("/vin/bulk", c.VinByPlateBulk)
 	}
 
-	return c.Server
+	return c.server
 }
 
 func (c *Config) RunServer() error {
-	return c.Server.Run(c.Addr())
+	return c.server.Run(c.Addr())
 }
 
 func (c *Config) Addr() string {
 	return c.config.BindAddr
+}
+
+func (c *Config) GetService() *service.Config {
+	return c.service
+}
+
+func (c *Config) testRequest(req *http.Request) *httptest.ResponseRecorder {
+	w := httptest.NewRecorder()
+	c.server.ServeHTTP(w, req)
+	return w
 }
 
 // initRequest получить юзера авторизованного и тело запроса в req

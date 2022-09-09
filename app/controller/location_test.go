@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"scan/app/model"
 	"testing"
 
@@ -13,8 +12,7 @@ import (
 func TestGetLocations(t *testing.T) {
 	c, _ := GetTestController()
 	req, _ := http.NewRequest("GET", "/api/v1/locations", nil)
-	w := httptest.NewRecorder()
-	c.Server.ServeHTTP(w, req)
+	w := c.testRequest(req)
 
 	var locations []model.Location
 	json.Unmarshal(w.Body.Bytes(), &locations)
