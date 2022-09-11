@@ -2,8 +2,11 @@ package main
 
 import (
 	"log"
+	"scan/app/apiserver"
 	"scan/app/controller"
 	"scan/app/helper/cron"
+	"scan/app/service"
+	"scan/app/store"
 )
 
 // @title           Дискаунтер автозачастей е92
@@ -18,16 +21,28 @@ import (
 // @name Authorization
 func main() {
 
-	c, err := controller.New()
+	///// load
+	// load config
+	config, err := apiserver.LoadConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
+	// load store
+	store, err := store.New(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// load service
+	service := service.New(store)
+	// load controller
+	controller := controller.New(config, store, service)
 
-	// cron
-	cron.CronStart(c.GetService())
 
-	// server
-	err = c.RunServer()
+	///// run
+	// run cron
+	cron.CronStart(config, service)
+	// run server
+	err = controller.RunServer()
 	if err != nil {
 		log.Fatal(err)
 	}

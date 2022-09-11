@@ -54,6 +54,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
+                "description": "Ести метод вызвать 2 раза, то он вставит указанный номер 2 раза",
                 "consumes": [
                     "application/json"
                 ],
@@ -101,6 +102,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
+                "description": "Ести метод вызвать 2 раза, то он вставит указанный номер 2 раза",
                 "consumes": [
                     "application/json"
                 ],
@@ -142,6 +144,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
+                "description": "Ести метод вызвать 2 раза, то он потратит 1 сканирование. Вернет из кэша.",
                 "consumes": [
                     "application/json"
                 ],
@@ -186,6 +189,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
+                "description": "Ести метод вызвать 2 раза, то он потратит 1 сканирование. Вернет из кэша.\nРаспознание происходит не сразу, отложенно (12 номеров в минуту).",
                 "consumes": [
                     "application/json"
                 ],

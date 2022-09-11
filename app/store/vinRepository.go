@@ -27,6 +27,11 @@ func (r *VinRepository) FirstOrCreateByPlate(m *model.Vin) error {
 	return res.Error
 }
 
+func (r *VinRepository) First(m *model.Vin) error {
+	res := r.store.db.Where(m).First(m)
+	return res.Error
+}
+
 func (r *VinRepository) StatusFirst(m *model.VinStatus) error {
 	v := validate.Struct(m)
 	if !v.Validate() {

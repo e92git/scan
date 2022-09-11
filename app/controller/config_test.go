@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"scan/app/apiserver"
+	"scan/app/service"
+	"scan/app/store"
 	"testing"
 )
 
@@ -13,15 +16,27 @@ func TestNew(t *testing.T) {
 }
 
 var TestController *Config
+
 func GetTestController() (*Config, error) {
 	if TestController != nil {
 		return TestController, nil
 	}
-	c, err := NewTestEnv()
+
+	// load config
+	config, err := apiserver.LoadConfig()
 	if err != nil {
 		return nil, err
 	}
-	TestController = c
+	// load store
+	store, err := store.New(config)
+	if err != nil {
+		return nil, err
+	}
+	// load service
+	service := service.New(store)
+	
+	// load controller
+	TestController = NewTestEnv(config, store, service)
 
-	return c, nil
+	return TestController, nil
 }

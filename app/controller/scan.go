@@ -14,6 +14,7 @@ type AddScanRequest struct {
 
 // AddScan godoc
 // @Summary      Добавить отсканированный номер
+// @Description  Ести метод вызвать 2 раза, то он вставит указанный номер 2 раза 
 // @Tags         Сканирование
 // @Accept       json
 // @Produce      json
@@ -46,6 +47,7 @@ type AddScanBulkRequest struct {
 
 // AddScan godoc
 // @Summary      Добавить отсканированные номера пачкой
+// @Description  Ести метод вызвать 2 раза, то он вставит указанный номер 2 раза 
 // @Tags         Сканирование
 // @Accept       json
 // @Produce      json

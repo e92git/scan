@@ -1,34 +1,35 @@
 package cron
 
 import (
-	"fmt"
+	"scan/app/apiserver"
 	"scan/app/service"
 	"time"
 
 	"github.com/go-co-op/gocron"
 )
 
-var c *gocron.Scheduler
+var cron *gocron.Scheduler
 
-func CronStart(s *service.Config) {
-	// выход если уже запущен крон
-	if c != nil {
+func CronStart( conf *apiserver.Config, s *service.Config) {
+	// выход, если отключен запуск крона в настройках .env
+	if !conf.RunCron {
+		return
+	}	
+	// выход, если уже запущен крон
+	if cron != nil {
 		return
 	}
     // инициализируем объект планировщика
-    c = gocron.NewScheduler(time.UTC)
+    cron = gocron.NewScheduler(time.UTC)
     // добавляем одну задачу каждые 60 сек
-    c.Every(60).Second().Do(task)
+    cron.Every(60).Second().Do(s.Vin().CronFindDeffered)
     // запускаем планировщик в фоне
-    c.StartAsync()
+    cron.StartAsync()
 }
 
 func CronStop() {
-	c.Stop()
-}
-
-func task() {
-	fmt.Println("Hello, playground1")
-	time.Sleep(1 * time.Second)
-	fmt.Println("Hello, playground2")
+	if cron == nil {
+		return
+	}
+	cron.Stop()
 }

@@ -10,6 +10,7 @@ type VinByPlateRequest struct {
 
 // VinByPlate godoc
 // @Summary      Распознать vin и другие данные по госномеру
+// @Description  Ести метод вызвать 2 раза, то он потратит 1 сканирование. Вернет из кэша. 
 // @Tags         Распознание
 // @Accept       json
 // @Produce      json
@@ -41,6 +42,8 @@ type VinByPlateBulkRequest struct {
 
 // VinByPlateBulk godoc
 // @Summary      Распознать vin и другие данные по госномеру пачкой
+// @Description  Ести метод вызвать 2 раза, то он потратит 1 сканирование. Вернет из кэша. 
+// @Description  Распознание происходит не сразу, отложенно (12 номеров в минуту).
 // @Tags         Распознание
 // @Accept       json
 // @Produce      json

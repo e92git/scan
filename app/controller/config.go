@@ -24,35 +24,23 @@ type Config struct {
 }
 
 // New controller
-func New() (*Config, error) {
-	config, err := apiserver.LoadConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	db, err := apiserver.ConnectGorm(config.Dsn, config.LogLevel)
-	if err != nil {
-		return nil, err
-	}
-
-	store := store.New(db)
-
+func New(config *apiserver.Config, store *store.Store, service *service.Config) *Config {
 	c := &Config{
 		config:  config,
 		store:   store,
-		service: service.New(store),
+		service: service,
 		server:  gin.Default(),
 	}
 
 	c.SetUpRouters()
 
-	return c, nil
+	return c
 }
 
 // New controller to test enviropment
-func NewTestEnv() (*Config, error) {
+func NewTestEnv(config *apiserver.Config, store *store.Store, service *service.Config) *Config {
 	// TODO: change DSN to test DSN
-	return New()
+	return New(config, store, service)
 }
 
 func (c *Config) SetUpRouters() *gin.Engine {
@@ -89,6 +77,10 @@ func (c *Config) Addr() string {
 
 func (c *Config) GetService() *service.Config {
 	return c.service
+}
+
+func (c *Config) GetConfig() *apiserver.Config {
+	return c.config
 }
 
 func (c *Config) testRequest(req *http.Request) *httptest.ResponseRecorder {

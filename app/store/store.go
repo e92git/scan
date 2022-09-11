@@ -1,6 +1,8 @@
 package store
 
 import (
+	"scan/app/apiserver"
+
 	"gorm.io/gorm"
 )
 
@@ -16,10 +18,15 @@ type Store struct {
 }
 
 // New ...
-func New(db *gorm.DB) *Store {
+func New(config *apiserver.Config) (*Store, error) {
+	db, err := apiserver.ConnectGorm(config.Dsn, config.LogLevel)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Store{
 		db: db,
-	}
+	}, nil
 }
 
 // User ...

@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"scan/app/helper"
 	"scan/app/model"
 	"scan/app/store"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type VinService struct {
@@ -23,7 +26,7 @@ func NewVin(store *store.Store, carService *CarService) *VinService {
 	}
 }
 
-// VinByPlate получить или создать новую запись с поиском vin. 
+// VinByPlate получить или создать новую запись с поиском vin.
 // Данные появятся сразу в ответе.
 func (s *VinService) VinByPlate(plate string, authorUserId int64, immediately bool) (*model.Vin, error) {
 	vin, err := s.firstOrCreateByPlate(plate, authorUserId, immediately)
@@ -46,7 +49,7 @@ func (s *VinService) VinByPlate(plate string, authorUserId int64, immediately bo
 	}
 
 	// find vin in autocode
-	err = s.autocodePutVin(vin)
+	err = s.findVin(vin)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +57,7 @@ func (s *VinService) VinByPlate(plate string, authorUserId int64, immediately bo
 	return vin, nil
 }
 
-// VinByPlateBulk получить или создать массив новых записей с поиском vin. 
+// VinByPlateBulk получить или создать массив новых записей с поиском vin.
 // Данные появятся потом (по крону FindDeffered)
 func (s *VinService) VinByPlateBulk(plates []string, authorUserId int64) ([]*model.Vin, error) {
 	var vins []*model.Vin
@@ -79,21 +82,57 @@ func (s *VinService) StatusFirst(id int) (*model.VinStatus, error) {
 	return newVinStatus, s.store.Vin().StatusFirst(newVinStatus)
 }
 
-// PutDeffered найти отложенные поиски по госномеру (status_id=5)
-// func (s *VinService) FindDeffered(id int) (*model.VinStatus, error) {
-// 	vin := &model.Vin{
-// 		StatusId: model.VinStatuses.CreatedDeferred,
-// 	}
+// PutDeffered найти отложенные поиски по госномеру (status_id=5) и выполнить их поиск в стороннем сервисе
+func (s *VinService) FindDeffered(count int) error {
+	var i = 0
+	var err error
+	for i < count {
+		// найти шаблон vin
+		vin := &model.Vin{
+			StatusId: model.VinStatuses.CreatedDeferred,
+		}
+		err = s.store.Vin().First(vin)
+		if (errors.Is(err, gorm.ErrRecordNotFound)) {
+			return nil // если нет записей для анализа - выход
+		}
+		if err != nil {
+			return err // если ошибка в получении - выход с ошибкой
+		}
 
-// 	return newVinStatus, s.store.Vin().StatusFirst(newVinStatus)
-// }
+		// сменить статус
+		vin.StatusId = model.VinStatuses.Created
+		err := s.store.Vin().Save(vin)
+		if err != nil {
+			return err
+		}
+
+		// обогатить vin
+		err = s.findVin(vin)
+		if err != nil {
+			return err
+		}
+
+		// следующий шаг (i из count) 
+		i++
+	}
+	return nil
+}
+
+// CronFindDeffered найти отложенные поиски по госномеру (status_id=5). count - 12 штук за раз
+func (s *VinService) CronFindDeffered() {
+	var count = 12 // количесто штук за раз
+	err := s.FindDeffered(count)
+	if err != nil {
+		log.Println("CronError: CronFindDeffered" + err.Error())
+	}
+}
 
 //
 // private
 //
 var constApiKey string = "AR-REST aV90cm9maW1vdl9pbnRlZ3JhdGlvbkBlOTI6MTY0MTQwMTEyMzo5OTk5OTk5OTk6VHBFcGRlMm5tdzVwcW0zbnExZ0o0dz09"
 
-// firstOrCreateByPlate создать пустую запись в таблице vin со статусом Created или CreatedDeferred 
+// firstOrCreateByPlate создать пустую запись в таблице vin со статусом Created или CreatedDeferred
 // или вернуть если уже есть по этому госномеру
 func (s *VinService) firstOrCreateByPlate(plate string, authorUserId int64, immediately bool) (*model.Vin, error) {
 	statusId := model.VinStatuses.Created
@@ -109,8 +148,8 @@ func (s *VinService) firstOrCreateByPlate(plate string, authorUserId int64, imme
 	return newVin, s.store.Vin().FirstOrCreateByPlate(newVin)
 }
 
-// дополнить объект vin вин-кодом и др. данными (по грз vin.plate)
-func (s *VinService) autocodePutVin(vin *model.Vin) error {
+// дополнить объект vin, с вин-кодом и др. данными (по грз vin.plate)
+func (s *VinService) findVin(vin *model.Vin) error {
 	c := helper.HttpClient()
 	err := s.autocodePutUid(c, vin)
 	if err != nil {
@@ -302,6 +341,13 @@ func (s *VinService) saveSuccess(vin *model.Vin, r *response) error {
 	vin.MarkId = markId
 	vin.ModelId = modelId
 
+	// если не найден vin. Сохранить с ошибкой
+	if vin.Vin == nil && vin.Vin2 == nil && vin.Body == nil {
+		responseError := "200: vins are empty"
+		vin.ResponseError = &responseError
+		vin.StatusId = model.VinStatuses.SendError
+	}
+
 	// сохранить
 	saveErr := s.store.Vin().Save(vin)
 	if saveErr != nil {
@@ -325,7 +371,7 @@ func (s *VinService) saveSuccess(vin *model.Vin, r *response) error {
 }
 
 // loadRelatives загрузить Author и Status зависимости
-func (s *VinService) loadRelatives(vin *model.Vin) error{
+func (s *VinService) loadRelatives(vin *model.Vin) error {
 	if vin.Author == nil {
 		author, err := s.store.User().First(vin.AuthorUserId)
 		if err != nil {

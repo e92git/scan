@@ -6,6 +6,7 @@ import "github.com/BurntSushi/toml"
 type Config struct {
 	BindAddr   string `toml:"bind_addr"`
 	LogLevel   string `toml:"log_level"`
+	RunCron    bool   `toml:"run_cron"`
 	Dsn        string `toml:"dsn"`
 	ApiKey     string `toml:"api_key"`
 	SessionKey string `toml:"session_key"`
