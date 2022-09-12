@@ -8,6 +8,7 @@ type Config struct {
 	LogLevel   string `toml:"log_level"`
 	RunCron    bool   `toml:"run_cron"`
 	Dsn        string `toml:"dsn"`
+	DsnTest    string `toml:"dsn_test"`
 	ApiKey     string `toml:"api_key"`
 	SessionKey string `toml:"session_key"`
 }

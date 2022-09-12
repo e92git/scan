@@ -39,8 +39,10 @@ func New(config *apiserver.Config, store *store.Store, service *service.Config) 
 
 // New controller to test enviropment
 func NewTestEnv(config *apiserver.Config, store *store.Store, service *service.Config) *Config {
-	// TODO: change DSN to test DSN
-	return New(config, store, service)
+	// change DSN to test DSN
+	configTest := *config
+	configTest.Dsn = configTest.DsnTest
+	return New(&configTest, store, service)
 }
 
 func (c *Config) SetUpRouters() *gin.Engine {
