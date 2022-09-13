@@ -53,3 +53,16 @@ stdout_logfile=/var/log/supervisor/scan.log
 
 -NGINX:
 service nginx restart
+
+-Запросы-
+Запрос всех авто, которых видели чаще 1 дня:
+SELECT plate, day, COUNT(*) as count_in_month
+FROM (
+  SELECT plate, DATE(scanned_at) as day, COUNT(*) as count_in_day
+  FROM `scans`
+  GROUP BY plate, day
+  ORDER BY count_in_day DESC
+) as ss
+GROUP BY plate
+HAVING count_in_month > 1
+ORDER BY count_in_month DESC

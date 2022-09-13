@@ -37,14 +37,6 @@ func New(config *apiserver.Config, store *store.Store, service *service.Config) 
 	return c
 }
 
-// New controller to test enviropment
-func NewTestEnv(config *apiserver.Config, store *store.Store, service *service.Config) *Config {
-	// change DSN to test DSN
-	configTest := *config
-	configTest.Dsn = configTest.DsnTest
-	return New(&configTest, store, service)
-}
-
 func (c *Config) SetUpRouters() *gin.Engine {
 	c.server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	v1 := c.server.Group("/api/v1")

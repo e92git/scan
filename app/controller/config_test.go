@@ -27,6 +27,8 @@ func GetTestController() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	// подмена бд на тестовую!
+	config.Dsn = config.DsnTest
 	// load store
 	store, err := store.New(config)
 	if err != nil {
@@ -34,9 +36,9 @@ func GetTestController() (*Config, error) {
 	}
 	// load service
 	service := service.New(store)
-	
+
 	// load controller
-	TestController = NewTestEnv(config, store, service)
+	TestController = New(config, store, service)
 
 	return TestController, nil
 }

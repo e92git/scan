@@ -342,7 +342,7 @@ func (s *VinService) saveSuccess(vin *model.Vin, r *response) error {
 	vin.ModelId = modelId
 
 	// если не найден vin. Сохранить с ошибкой
-	if vin.Vin == nil && vin.Vin2 == nil && vin.Body == nil {
+	if vin.Vin == nil && vin.Vin2 == nil && vin.Body == nil && vin.MarkId == nil {
 		responseError := "200: vins are empty"
 		vin.ResponseError = &responseError
 		vin.StatusId = model.VinStatuses.SendError
