@@ -49,6 +49,7 @@ func (c *Config) SetUpRouters() *gin.Engine {
 
 		// "show_api" middleware
 		v1.Use(c.ShowApiMiddleware())
+		v1.GET("/tire/analytics", c.GetTireAnalytics)
 
 		// "manager" middleware
 		v1.Use(c.ManagerMiddleware())

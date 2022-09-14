@@ -12,6 +12,7 @@ type Config struct {
 	user     *UserService
 	vin      *VinService
 	car      *CarService
+	tire     *TireService
 }
 
 func New(store *store.Store) *Config {
@@ -54,4 +55,11 @@ func (c *Config) Car() *CarService {
 		c.car = NewCar(c.store)
 	}
 	return c.car
+}
+
+func (c *Config) Tire() *TireService {
+	if c.tire == nil {
+		c.tire = NewTire(c.store)
+	}
+	return c.tire
 }

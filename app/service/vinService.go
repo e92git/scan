@@ -48,7 +48,7 @@ func (s *VinService) VinByPlate(plate string, authorUserId int64, immediately bo
 		return vin, nil
 	}
 
-	// find vin in autocode
+	// find vin in autocode now
 	err = s.findVin(vin)
 	if err != nil {
 		return nil, err

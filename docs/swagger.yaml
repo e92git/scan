@@ -66,6 +66,9 @@ definitions:
       name:
         example: Toyota
         type: string
+      name_in_tires:
+        example: Toyota
+        type: string
     required:
     - name
     type: object
@@ -78,6 +81,9 @@ definitions:
         example: 12
         type: integer
       name:
+        example: Prius
+        type: string
+      name_in_tires:
         example: Prius
         type: string
     required:
@@ -120,6 +126,61 @@ definitions:
     - location_id
     - scanned_at
     - user_id
+    type: object
+  model.Size:
+    properties:
+      cars:
+        properties:
+          count:
+            example: 2
+            type: integer
+          list:
+            example:
+            - Nissan Almera 2011
+            - ВАЗ 2101-2107 2005
+            items:
+              type: string
+            type: array
+        type: object
+      index:
+        example: 24.344
+        type: number
+      percent:
+        example: 7.89
+        type: number
+      plates:
+        properties:
+          count:
+            example: 3
+            type: integer
+          list:
+            example:
+            - A412AY142
+            - C109HA142
+            - K093YE70
+            items:
+              type: string
+            type: array
+        type: object
+      rank:
+        example: 1
+        type: integer
+      size:
+        example: 175/70 R14
+        type: string
+    type: object
+  model.TireAnalyticsResponse:
+    properties:
+      count:
+        example: 35
+        type: integer
+      list:
+        items:
+          $ref: '#/definitions/model.Size'
+        type: array
+    required:
+    - count
+    - list
     type: object
   model.User:
     properties:
@@ -284,6 +345,26 @@ paths:
       summary: Добавить отсканированные номера пачкой
       tags:
       - Сканирование
+  /tire/analytics:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.TireAnalyticsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ActionError'
+      security:
+      - ApiKeyAuth: []
+      summary: Аналитика для закупки шин
+      tags:
+      - Шины
   /vin:
     post:
       consumes:

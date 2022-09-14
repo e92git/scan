@@ -129,6 +129,39 @@
                 }
             }
         },
+        "/tire/analytics": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Шины"
+                ],
+                "summary": "Аналитика для закупки шин",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.TireAnalyticsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ActionError"
+                        }
+                    }
+                }
+            }
+        },
         "/vin": {
             "post": {
                 "security": [
@@ -321,6 +354,10 @@
                 "name": {
                     "type": "string",
                     "example": "Toyota"
+                },
+                "name_in_tires": {
+                    "type": "string",
+                    "example": "Toyota"
                 }
             }
         },
@@ -340,6 +377,10 @@
                     "example": 12
                 },
                 "name": {
+                    "type": "string",
+                    "example": "Prius"
+                },
+                "name_in_tires": {
                     "type": "string",
                     "example": "Prius"
                 }
@@ -393,6 +434,85 @@
                 "user_id": {
                     "type": "integer",
                     "example": 234
+                }
+            }
+        },
+        "model.Size": {
+            "type": "object",
+            "properties": {
+                "cars": {
+                    "type": "object",
+                    "properties": {
+                        "count": {
+                            "type": "integer",
+                            "example": 2
+                        },
+                        "list": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "example": [
+                                "Nissan Almera 2011",
+                                "ВАЗ 2101-2107 2005"
+                            ]
+                        }
+                    }
+                },
+                "index": {
+                    "type": "number",
+                    "example": 24.344
+                },
+                "percent": {
+                    "type": "number",
+                    "example": 7.89
+                },
+                "plates": {
+                    "type": "object",
+                    "properties": {
+                        "count": {
+                            "type": "integer",
+                            "example": 3
+                        },
+                        "list": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "example": [
+                                "A412AY142",
+                                "C109HA142",
+                                "K093YE70"
+                            ]
+                        }
+                    }
+                },
+                "rank": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "size": {
+                    "type": "string",
+                    "example": "175/70 R14"
+                }
+            }
+        },
+        "model.TireAnalyticsResponse": {
+            "type": "object",
+            "required": [
+                "count",
+                "list"
+            ],
+            "properties": {
+                "count": {
+                    "type": "integer",
+                    "example": 35
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Size"
+                    }
                 }
             }
         },
