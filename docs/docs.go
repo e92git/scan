@@ -170,6 +170,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/tire/sync": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Шины"
+                ],
+                "summary": "Синхронизировать марки и модели в таблицах car_*s и tires",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ActionError"
+                        }
+                    }
+                }
+            }
+        },
         "/vin": {
             "post": {
                 "security": [

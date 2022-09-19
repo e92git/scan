@@ -21,3 +21,22 @@ func (c *Config) GetTireAnalytics(g *gin.Context) {
 	}
 	c.respond(g, r)
 }
+
+
+// GetTireSync godoc
+// @Summary      Синхронизировать марки и модели в таблицах car_m*s и tires
+// @Tags         Шины
+// @Accept       json
+// @Produce      json
+// @Success      200
+// @Failure      400  {object}  controller.ActionError
+// @Router       /tire/sync [get]
+// @Security 	 ApiKeyAuth
+func (c *Config) GetTireSync(g *gin.Context) {
+	r, err := c.service.Tire().GetTireAnalytics()
+	if err != nil {
+		c.error(g, err)
+		return
+	}
+	c.respond(g, r)
+}

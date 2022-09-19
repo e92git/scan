@@ -365,6 +365,24 @@ paths:
       summary: Аналитика для закупки шин
       tags:
       - Шины
+  /tire/sync:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ActionError'
+      security:
+      - ApiKeyAuth: []
+      summary: Синхронизировать марки и модели в таблицах car_*s и tires
+      tags:
+      - Шины
   /vin:
     post:
       consumes:

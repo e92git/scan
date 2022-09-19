@@ -39,56 +39,6 @@ func main() {
 	fmt.Println("Успешно завершено Всё.")
 }
 
-// marks - import всех марок из tires в car_marks.name_in_tires.
-// param clear - очистить все car_marks.name_in_tires и получить заново
-func marks(db *gorm.DB, clear bool) error {
-	var res *gorm.DB
-	if clear == true {
-		res = db.Exec("UPDATE car_marks SET name_in_tires = NULL")
-		if res.Error != nil {
-			return res.Error
-		}
-	}
-
-	rows, err := db.Raw(`
-	WITH tires_marks AS (SELECT vendor as mark, COUNT(*) as model_count FROM tires GROUP BY vendor ORDER BY mark ASC)
-		SELECT cm.*
-		FROM car_marks cm
-		LEFT JOIN tires_marks tm ON cm.name = tm.mark
-		WHERE cm.name_in_tires is NULL AND tm.mark is NOT NULL
-	;`).Rows()
-	defer rows.Close()
-	if err != nil {
-		return err
-	}
-	var mark model.CarMark
-	for rows.Next() {
-		db.ScanRows(rows, &mark)
-		mark.NameInTires = &mark.Name
-		res = db.Save(mark)
-		if res.Error != nil {
-			return res.Error
-		}
-		fmt.Println("Добавлена марка (полное совпадение): " + *mark.NameInTires)
-	}
-
-	updateSql := "UPDATE car_marks SET name_in_tires = ? WHERE name = ?"
-	res = db.Exec(updateSql, "ВАЗ", "LADA (ВАЗ)")
-	if res.Error != nil {
-		return res.Error
-	}
-	res = db.Exec(updateSql, "Ssang Yong", "SsangYong")
-	if res.Error != nil {
-		return res.Error
-	}
-	res = db.Exec(updateSql, "Mercedes", "Mercedes-Benz")
-	if res.Error != nil {
-		return res.Error
-	}
-
-	return nil
-}
-
 // models - import всех моделей (у кого найдена марка) из tires в car_model.name_in_tires.
 // param clear - очистить все car_model.name_in_tires и получить заново
 func models(db *gorm.DB, clear bool) error {

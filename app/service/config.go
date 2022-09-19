@@ -6,13 +6,14 @@ import (
 )
 
 type Config struct {
-	store    *store.Store
-	location *LocationService
-	scan     *ScanService
-	user     *UserService
-	vin      *VinService
-	car      *CarService
-	tire     *TireService
+	store       *store.Store
+	location    *LocationService
+	scan        *ScanService
+	user        *UserService
+	vin         *VinService
+	vinAutocode *VinAutocodeService
+	car         *CarService
+	tire        *TireService
 }
 
 func New(store *store.Store) *Config {
@@ -45,9 +46,16 @@ func (c *Config) User() *UserService {
 
 func (c *Config) Vin() *VinService {
 	if c.vin == nil {
-		c.vin = NewVin(c.store, c.Car())
+		c.vin = NewVin(c.store, c.VinAutocode())
 	}
 	return c.vin
+}
+
+func (c *Config) VinAutocode() *VinAutocodeService {
+	if c.vinAutocode == nil {
+		c.vinAutocode = NewVinAutocode(c.store, c.Car())
+	}
+	return c.vinAutocode
 }
 
 func (c *Config) Car() *CarService {

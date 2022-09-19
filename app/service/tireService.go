@@ -32,3 +32,14 @@ func (s *TireService) GetTireAnalytics() (*model.TireAnalyticsResponse, error) {
 
 	return r, nil
 }
+
+type GetTireSyncResponse struct {
+	Logs []string
+}
+func (s *TireService) GetTireSync() (*model.TireAnalyticsResponse, error) {
+	r, err := s.store.Tire().TireAnalytics()
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
