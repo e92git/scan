@@ -249,6 +249,17 @@ definitions:
         example: Результат успешно получен
         type: string
     type: object
+  service.GetTireSyncResponse:
+    properties:
+      logs:
+        example:
+        - Успешно завершено Марки
+        - Добавлена модель Приора
+        - Успешно завершено Всё
+        items:
+          type: string
+        type: array
+    type: object
   service.Scans:
     properties:
       date:
@@ -373,14 +384,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: ""
+          description: OK
+          schema:
+            $ref: '#/definitions/service.GetTireSyncResponse'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/controller.ActionError'
       security:
       - ApiKeyAuth: []
-      summary: Синхронизировать марки и модели в таблицах car_*s и tires
+      summary: Синхронизировать марки и модели в таблицах car_m*s и tires
       tags:
       - Шины
   /vin:

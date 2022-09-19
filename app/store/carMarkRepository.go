@@ -22,9 +22,9 @@ func (r *CarMarkRepository) FirstOrCreate(m *model.CarMark) error {
 	return res.Error
 }
 
-// ImportFromTiresToCarMarks - import всех марок из tires в car_marks.name_in_tires.
+// ImportFromTires - import всех марок из tires в car_marks.name_in_tires.
 // param clear - очистить все car_marks.name_in_tires и получить заново
-func (r *CarMarkRepository) ImportFromTiresToCarMarks(clear bool) ([]string, error) {
+func (r *CarMarkRepository) ImportFromTires(clear bool) ([]string, error) {
 	var logs []string
 	var res *gorm.DB
 	if clear == true {
@@ -53,22 +53,13 @@ func (r *CarMarkRepository) ImportFromTiresToCarMarks(clear bool) ([]string, err
 		if res.Error != nil {
 			return nil, res.Error
 		}
-		logs = append(logs, "Добавлена марка (полное совпадение): " + *mark.NameInTires)
+		logs = append(logs, "Добавлена марка (полное совпадение): "+*mark.NameInTires)
 	}
 
 	updateSql := "UPDATE car_marks SET name_in_tires = ? WHERE name = ?"
 	res = r.store.db.Exec(updateSql, "ВАЗ", "LADA (ВАЗ)")
-	if res.Error != nil {
-		return nil, res.Error
-	}
 	res = r.store.db.Exec(updateSql, "Ssang Yong", "SsangYong")
-	if res.Error != nil {
-		return nil, res.Error
-	}
 	res = r.store.db.Exec(updateSql, "Mercedes", "Mercedes-Benz")
-	if res.Error != nil {
-		return nil, res.Error
-	}
 
 	return logs, nil
 }

@@ -28,12 +28,12 @@ func (c *Config) GetTireAnalytics(g *gin.Context) {
 // @Tags         Шины
 // @Accept       json
 // @Produce      json
-// @Success      200
+// @Success      200  {object}  service.GetTireSyncResponse
 // @Failure      400  {object}  controller.ActionError
 // @Router       /tire/sync [get]
 // @Security 	 ApiKeyAuth
 func (c *Config) GetTireSync(g *gin.Context) {
-	r, err := c.service.Tire().GetTireAnalytics()
+	r, err := c.service.Tire().GetTireSync()
 	if err != nil {
 		c.error(g, err)
 		return

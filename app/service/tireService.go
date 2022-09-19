@@ -34,12 +34,26 @@ func (s *TireService) GetTireAnalytics() (*model.TireAnalyticsResponse, error) {
 }
 
 type GetTireSyncResponse struct {
-	Logs []string
+	Logs []string `json:"logs" example:"Успешно завершено Марки,Добавлена модель Приора,Успешно завершено Всё"`
 }
-func (s *TireService) GetTireSync() (*model.TireAnalyticsResponse, error) {
-	r, err := s.store.Tire().TireAnalytics()
+func (s *TireService) GetTireSync() (*GetTireSyncResponse, error) {
+	r := &GetTireSyncResponse{} 
+	
+	markLogs, err := s.store.CarMark().ImportFromTires(false)
 	if err != nil {
 		return nil, err
 	}
+	r.Logs = append(r.Logs, markLogs...)
+	r.Logs = append(r.Logs, "Успешно завершено Марки")
+	
+	modelLogs, err := s.store.CarModel().ImportFromTires(false)
+	if err != nil {
+		return nil, err
+	}
+	r.Logs = append(r.Logs, modelLogs...)
+	r.Logs = append(r.Logs, "Успешно завершено Модели")
+
+	r.Logs = append(r.Logs, "Успешно завершено Всё")
+
 	return r, nil
 }

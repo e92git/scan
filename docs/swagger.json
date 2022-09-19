@@ -178,10 +178,13 @@
                 "tags": [
                     "Шины"
                 ],
-                "summary": "Синхронизировать марки и модели в таблицах car_*s и tires",
+                "summary": "Синхронизировать марки и модели в таблицах car_m*s и tires",
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/service.GetTireSyncResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -636,6 +639,22 @@
                 "name": {
                     "type": "string",
                     "example": "Результат успешно получен"
+                }
+            }
+        },
+        "service.GetTireSyncResponse": {
+            "type": "object",
+            "properties": {
+                "logs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "Успешно завершено Марки",
+                        "Добавлена модель Приора",
+                        "Успешно завершено Всё"
+                    ]
                 }
             }
         },
