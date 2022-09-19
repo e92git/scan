@@ -22,12 +22,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Import Marks
-	err = marks(db, false)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Успешно завершено Марки.")
+	// // Import Marks
+	// err = marks(db, false)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println("Успешно завершено Марки.")
 
 	// Import Models
 	err = models(db, false)
