@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"scan/app/apiserver"
 	"scan/app/helper"
 	"scan/app/model"
 	"scan/app/store"
@@ -12,18 +13,18 @@ import (
 )
 
 type VinAutocodeService struct {
+	config     *apiserver.Config
 	store      *store.Store
 	carService *CarService
 }
 
-func NewVinAutocode(store *store.Store, carService *CarService) *VinAutocodeService {
+func NewVinAutocode(config *apiserver.Config, store *store.Store, carService *CarService) *VinAutocodeService {
 	return &VinAutocodeService{
+		config:     config,
 		store:      store,
 		carService: carService,
 	}
 }
-
-var autocodeApiKey string = "AR-REST aV90cm9maW1vdl9pbnRlZ3JhdGlvbkBlOTI6MTY0MTQwMTEyMzo5OTk5OTk5OTk6VHBFcGRlMm5tdzVwcW0zbnExZ0o0dz09"
 
 func (s *VinAutocodeService) Find(c *http.Client, vin *model.Vin) error {
 	err := s.AutocodePutUid(c, vin)
@@ -36,6 +37,7 @@ func (s *VinAutocodeService) Find(c *http.Client, vin *model.Vin) error {
 	}
 	return nil
 }
+
 // find and put autocodeUid by plate into vin (api request)
 func (s *VinAutocodeService) AutocodePutUid(c *http.Client, vin *model.Vin) error {
 	type jsonType struct {
@@ -51,7 +53,7 @@ func (s *VinAutocodeService) AutocodePutUid(c *http.Client, vin *model.Vin) erro
 	statusCode, body, err := helper.SendRequest(c, http.MethodPost,
 		"https://b2b-api.spectrumdata.ru/b2b/api/v1/user/reports/report_check_vehicle/_make",
 		jsonData,
-		autocodeApiKey,
+		s.config.ApiKeyAutocode,
 	)
 
 	// big error (fake domen)
@@ -129,7 +131,7 @@ func (s *VinAutocodeService) AutocodePutReport(c *http.Client, vin *model.Vin) e
 		statusCode, body, err := helper.SendRequest(c, http.MethodGet,
 			fmt.Sprintf("https://b2b-api.spectrumdata.ru/b2b/api/v1/user/reports/%s?_content=true", *autocodeUid),
 			nil,
-			autocodeApiKey,
+			s.config.ApiKeyAutocode,
 		)
 		// big error (fake domen)
 		if err != nil {

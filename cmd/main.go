@@ -33,7 +33,7 @@ func main() {
 		log.Fatal(err)
 	}
 	// load service
-	service := service.New(store)
+	service := service.New(config, store)
 	// load controller
 	controller := controller.New(config, store, service)
 

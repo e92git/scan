@@ -2,10 +2,12 @@ package service
 
 import (
 	"fmt"
+	"scan/app/apiserver"
 	"scan/app/store"
 )
 
 type Config struct {
+	config      *apiserver.Config
 	store       *store.Store
 	location    *LocationService
 	scan        *ScanService
@@ -17,9 +19,10 @@ type Config struct {
 	tire        *TireService
 }
 
-func New(store *store.Store) *Config {
+func New(config *apiserver.Config, store *store.Store) *Config {
 	return &Config{
-		store: store,
+		config: config,
+		store:  store,
 	}
 }
 
@@ -47,14 +50,14 @@ func (c *Config) User() *UserService {
 
 func (c *Config) VinAutocode() *VinAutocodeService {
 	if c.vinAutocode == nil {
-		c.vinAutocode = NewVinAutocode(c.store, c.Car())
+		c.vinAutocode = NewVinAutocode(c.config ,c.store, c.Car())
 	}
 	return c.vinAutocode
 }
 
 func (c *Config) VinCloud() *VinCloudService {
 	if c.vinCloud == nil {
-		c.vinCloud = NewVinCloud(c.store, c.Car())
+		c.vinCloud = NewVinCloud(c.config, c.store, c.Car())
 	}
 	return c.vinCloud
 }

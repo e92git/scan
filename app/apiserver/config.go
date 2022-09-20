@@ -4,11 +4,13 @@ import "github.com/BurntSushi/toml"
 
 // Config ...
 type Config struct {
-	BindAddr   string `toml:"bind_addr"`
-	LogLevel   string `toml:"log_level"`
-	RunCron    bool   `toml:"run_cron"`
-	Dsn        string `toml:"dsn"`
-	DsnTest    string `toml:"dsn_test"`
+	BindAddr       string `toml:"bind_addr"`
+	LogLevel       string `toml:"log_level"`
+	RunCron        bool   `toml:"run_cron"`
+	Dsn            string `toml:"dsn"`
+	DsnTest        string `toml:"dsn_test"`
+	ApiKeyAutocode string `toml:"api_key_autocode"`
+	ApiKeyCloud    string `toml:"api_key_cloud"`
 }
 
 // NewConfig ...

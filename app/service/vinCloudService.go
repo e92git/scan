@@ -5,31 +5,32 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"scan/app/apiserver"
 	"scan/app/helper"
 	"scan/app/model"
 	"scan/app/store"
 )
 
 type VinCloudService struct {
+	config     *apiserver.Config
 	store      *store.Store
 	carService *CarService
 }
 
-func NewVinCloud(store *store.Store, carService *CarService) *VinCloudService {
+func NewVinCloud(config *apiserver.Config, store *store.Store, carService *CarService) *VinCloudService {
 	return &VinCloudService{
+		config:     config,
 		store:      store,
 		carService: carService,
 	}
 }
-
-var cloudApiKey string = "Bearer PCXIzBBDGhXvQUDAtzWXRFADaPiroJoMd51FnOvO6g6SeCU91nqC3YXxEJAmtfnbLn1fAQ4j1W6xEYnMy6fd9d7yCtn14mN6RE2"
 
 // find and put vin data into vin table (api request)
 func (s *VinCloudService) Find(c *http.Client, vin *model.Vin) error {
 	statusCode, body, err := helper.SendRequest(c, http.MethodGet,
 		"https://api.clouddata.ru/v1/car_autofill_lite?car_number="+vin.Plate,
 		nil,
-		cloudApiKey,
+		s.config.ApiKeyCloud,
 	)
 
 	// big error (fake domen)
