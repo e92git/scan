@@ -11,13 +11,13 @@ type VinStatus struct {
 }
 
 var VinStatuses = struct {
-	Created         int
+	InProcess       int
 	CreatedDeferred int
 	SendError       int
 	SendSuccess     int
 	Success         int
 }{
-	Created:         1, // Создан
+	InProcess:       1, // Создан. Взят в работу.
 	CreatedDeferred: 5, // Создан (отложенный запуск)
 	SendError:       2, // API-запрос НЕ отправился. Ошибка.
 	SendSuccess:     3, // API-запрос отправлен. Успех!

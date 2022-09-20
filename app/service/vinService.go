@@ -13,12 +13,16 @@ import (
 type VinService struct {
 	store       *store.Store
 	vinAutocode *VinAutocodeService
+	vinCloud    *VinCloudService
 }
 
-func NewVin(store *store.Store, vinAutocode *VinAutocodeService) *VinService {
+var vinSourse string = "cloud" // источник данных по умолчанию "autocode" | "cloud"
+
+func NewVin(store *store.Store, vinAutocode *VinAutocodeService, vinCloud *VinCloudService) *VinService {
 	return &VinService{
 		store:       store,
 		vinAutocode: vinAutocode,
+		vinCloud:    vinCloud,
 	}
 }
 
@@ -37,7 +41,7 @@ func (s *VinService) VinByPlate(plate string, authorUserId int64, immediately bo
 
 	// find vin if immediately == true
 	if immediately == true {
-		// find vin in autocode now
+		// find vin in autocode or cloud now
 		err = s.findVin(vin)
 		if err != nil {
 			return nil, err
@@ -95,7 +99,7 @@ func (s *VinService) FindDeffered(count int) error {
 		}
 
 		// сменить статус
-		vin.StatusId = model.VinStatuses.Created
+		vin.StatusId = model.VinStatuses.InProcess
 		err := s.store.Vin().Save(vin)
 		if err != nil {
 			return err
@@ -129,7 +133,7 @@ func (s *VinService) CronFindDeffered() {
 // firstOrCreateByPlate создать пустую запись в таблице vin со статусом Created или CreatedDeferred
 // или вернуть если уже есть по этому госномеру
 func (s *VinService) firstOrCreateByPlate(plate string, authorUserId int64, immediately bool) (*model.Vin, error) {
-	statusId := model.VinStatuses.Created
+	statusId := model.VinStatuses.InProcess
 	if !immediately {
 		statusId = model.VinStatuses.CreatedDeferred
 	}
@@ -145,27 +149,39 @@ func (s *VinService) firstOrCreateByPlate(plate string, authorUserId int64, imme
 // дополнить объект vin, с вин-кодом и др. данными (по грз vin.plate)
 func (s *VinService) findVin(vin *model.Vin) error {
 	c := helper.HttpClient()
-	err := s.vinAutocode.AutocodePutUid(c, vin)
-	if err != nil {
-		return err
+	// TODO: удалить vinSourse
+	// всегда вызывать s.vinCloud.Find
+	// дополнить s.vinCloud.Find поиском марки и модели из name и name_synonyms
+	// если не нашлась марка и модель, но получен вин - вызывать s.vinAutocode.find
+	// сверять марку и модель и дополнять name_synonyms при каждом обращении к этим полям (name тоже должна быть в name_synonyms)
+	// вынести apiKey в .env
+	switch vinSourse {
+	case "cloud":
+		err := s.vinCloud.Find(c, vin)
+		if err != nil {
+			return err
+		}
+		return nil
+	case "autocode":
+		err := s.vinAutocode.Find(c, vin)
+		if err != nil {
+			return err
+		}
+		return nil
 	}
-	err = s.vinAutocode.AutocodePutReport(c, vin)
-	if err != nil {
-		return err
-	}
-	return nil
+	return errors.New("Undefined source")
 }
 
-// loadRelatives загрузить Author и Status зависимости
+// loadRelatives подгрузить Author и Status зависимости, если их нет или они не актуальные
 func (s *VinService) loadRelatives(vin *model.Vin) error {
-	if vin.Author == nil {
+	if vin.Author == nil || vin.Author.ID != vin.AuthorUserId {
 		author, err := s.store.User().First(vin.AuthorUserId)
 		if err != nil {
 			return err
 		}
 		vin.Author = author
 	}
-	if vin.Status == nil {
+	if vin.Status == nil || vin.Status.ID != vin.StatusId {
 		status, err := s.Status(vin.StatusId)
 		if err != nil {
 			return err

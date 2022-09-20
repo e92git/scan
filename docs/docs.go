@@ -399,6 +399,10 @@ const docTemplate = `{
                 "name_in_tires": {
                     "type": "string",
                     "example": "Toyota"
+                },
+                "name_synonyms": {
+                    "type": "string",
+                    "example": "[Toyota,Тойота]"
                 }
             }
         },
@@ -424,6 +428,10 @@ const docTemplate = `{
                 "name_in_tires": {
                     "type": "string",
                     "example": "Prius"
+                },
+                "name_synonyms": {
+                    "type": "string",
+                    "example": "[Prius,Приус,PRIUS II]"
                 }
             }
         },
@@ -609,6 +617,10 @@ const docTemplate = `{
                     "example": "О245КМ142"
                 },
                 "response": {
+                    "type": "string",
+                    "example": "{...}"
+                },
+                "response_cloud": {
                     "type": "string",
                     "example": "{...}"
                 },

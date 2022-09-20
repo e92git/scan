@@ -4,6 +4,7 @@ import (
 	"scan/app/model"
 
 	"github.com/gookit/validate"
+	"gorm.io/gorm/clause"
 )
 
 type VinRepository struct {
@@ -49,6 +50,6 @@ func (r *VinRepository) Save(m *model.Vin) error {
 		return v.Errors
 	}
 
-	res := r.store.db.Save(m)
+	res := r.store.db.Omit(clause.Associations).Save(m)
 	return res.Error
 }

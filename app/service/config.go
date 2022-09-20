@@ -10,8 +10,9 @@ type Config struct {
 	location    *LocationService
 	scan        *ScanService
 	user        *UserService
-	vin         *VinService
 	vinAutocode *VinAutocodeService
+	vinCloud    *VinCloudService
+	vin         *VinService
 	car         *CarService
 	tire        *TireService
 }
@@ -44,18 +45,25 @@ func (c *Config) User() *UserService {
 	return c.user
 }
 
-func (c *Config) Vin() *VinService {
-	if c.vin == nil {
-		c.vin = NewVin(c.store, c.VinAutocode())
-	}
-	return c.vin
-}
-
 func (c *Config) VinAutocode() *VinAutocodeService {
 	if c.vinAutocode == nil {
 		c.vinAutocode = NewVinAutocode(c.store, c.Car())
 	}
 	return c.vinAutocode
+}
+
+func (c *Config) VinCloud() *VinCloudService {
+	if c.vinCloud == nil {
+		c.vinCloud = NewVinCloud(c.store, c.Car())
+	}
+	return c.vinCloud
+}
+
+func (c *Config) Vin() *VinService {
+	if c.vin == nil {
+		c.vin = NewVin(c.store, c.VinAutocode(), c.VinCloud())
+	}
+	return c.vin
 }
 
 func (c *Config) Car() *CarService {

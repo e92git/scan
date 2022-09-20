@@ -16,6 +16,7 @@ type Vin struct {
 	ModelId       *int      `json:"-" example:"123"`
 	Year          *int      `json:"year" example:"2012"`
 	Response      *string   `json:"response" example:"{...}"`
+	ResponseCloud *string   `json:"response_cloud" example:"{...}"`
 	ResponseError *string   `json:"response_error" example:"400: bad request"`
 	StatusId      int       `json:"-" example:"4" validate:"required"`
 	AuthorUserId  int64     `json:"-" example:"234" validate:"required"`
@@ -51,10 +52,6 @@ func (v *Vin) GetAutocodeUid() (*string, error) {
 		return &uid, nil
 	}
 	return nil, errors.New("Autocode uid not found")
-}
-
-func (s *Vin) NeedSend() bool {
-	return s.StatusId == VinStatuses.Created || s.StatusId == VinStatuses.SendSuccess
 }
 
 func (s *Vin) IsSuccessStatus() bool {
