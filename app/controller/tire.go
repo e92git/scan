@@ -24,7 +24,7 @@ func (c *Config) GetTireAnalytics(g *gin.Context) {
 
 
 // GetTireSync godoc
-// @Summary      Синхронизировать марки и модели в таблицах car_m*s и tires
+// @Summary      Синхронизировать марки и модели с таблицей tires
 // @Tags         Шины
 // @Accept       json
 // @Produce      json

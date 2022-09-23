@@ -117,9 +117,9 @@ func (s *VinService) FindDeffered(count int) error {
 	return nil
 }
 
-// CronFindDeffered найти отложенные поиски по госномеру (status_id=5). count - 12 штук за раз
+// CronFindDeffered найти отложенные поиски по госномеру (status_id=5)
 func (s *VinService) CronFindDeffered() {
-	var count = 12 // количесто штук за раз
+	var count = 60 // количесто штук за раз (12 в минуту)
 	err := s.FindDeffered(count)
 	if err != nil {
 		log.Println("CronError: CronFindDeffered" + err.Error())
@@ -154,7 +154,6 @@ func (s *VinService) findVin(vin *model.Vin) error {
 	// дополнить s.vinCloud.Find поиском марки и модели из name и name_synonyms
 	// если не нашлась марка и модель, но получен вин - вызывать s.vinAutocode.find
 	// сверять марку и модель и дополнять name_synonyms при каждом обращении к этим полям (name тоже должна быть в name_synonyms)
-	// вынести apiKey в .env
 	switch vinSourse {
 	case "cloud":
 		err := s.vinCloud.Find(c, vin)

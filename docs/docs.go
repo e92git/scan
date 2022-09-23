@@ -186,7 +186,7 @@ const docTemplate = `{
                 "tags": [
                     "Шины"
                 ],
-                "summary": "Синхронизировать марки и модели в таблицах car_m*s и tires",
+                "summary": "Синхронизировать марки и модели с таблицей tires",
                 "responses": {
                     "200": {
                         "description": "OK",

@@ -35,7 +35,7 @@ func GetTestController() (*Config, error) {
 		return nil, err
 	}
 	// load service
-	service := service.New(store)
+	service := service.New(config, store)
 
 	// load controller
 	TestController = New(config, store, service)

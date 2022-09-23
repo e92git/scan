@@ -402,7 +402,7 @@ paths:
             $ref: '#/definitions/controller.ActionError'
       security:
       - ApiKeyAuth: []
-      summary: Синхронизировать марки и модели в таблицах car_m*s и tires
+      summary: Синхронизировать марки и модели с таблицей tires
       tags:
       - Шины
   /vin:
