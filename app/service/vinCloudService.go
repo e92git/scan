@@ -9,6 +9,8 @@ import (
 	"scan/app/helper"
 	"scan/app/model"
 	"scan/app/store"
+
+	"gorm.io/gorm"
 )
 
 type VinCloudService struct {
@@ -74,34 +76,55 @@ type responseCloud struct {
 		Mark  string `json:"car_brand"`
 		Model string `json:"car_model"`
 		Year  int    `json:"car_year"`
-	} `json:"response"`
+	}
+}
+
+type cloudCar struct {
+	Vin   *string
+	Body  *string
+	Mark  *string
+	Model *string
+	Year  *int
 }
 
 // saveSuccess распарсить ответ r, занести в vin, сохранить vin в бд
 func (s *VinCloudService) saveSuccess(v *model.Vin, r *responseCloud) error {
-	var vin *string = nil
-	if r.Response[0].Vin != "" {
-		vin = &r.Response[0].Vin
-	}
-	var body *string = nil
-	if r.Response[0].Body != "" {
-		body = &r.Response[0].Body
-	}
-	var year *int = nil
-	if r.Response[0].Year != 0 {
-		year = &r.Response[0].Year
-	}
-
-	v.Vin = vin
-	if body != vin {
-		v.Body = body
-	}
-	v.Year = year
+	c := s.getClouCar(r)
+	v.Vin = c.Vin
+	v.Year = c.Year
 	v.StatusId = model.VinStatuses.Success
 	v.ResponseError = nil
 
+	// Body
+	if c.Body != nil && c.Body != c.Vin {
+		v.Body = c.Body
+	}
+	// find mark
+	if c.Mark != nil {
+		carMark, err := s.carService.FirstMarkByName(*c.Mark)
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+		if carMark != nil {
+			v.Mark = carMark
+			v.MarkId = &carMark.ID
+		}
+
+	}
+	// find model
+	if c.Model != nil {
+		carModel, err := s.carService.FirstModelByName(*c.Model)
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+		if carModel != nil {
+			v.Model = carModel
+			v.ModelId = &carModel.ID
+		}
+	}
+
 	// если не найден vin. Сохранить с ошибкой
-	if v.Vin == nil && v.Vin2 == nil && v.Body == nil && v.MarkId == nil {
+	if v.Vin == nil && v.Vin2 == nil && v.Body == nil && v.ModelId == nil {
 		responseError := "200: vins are empty"
 		v.ResponseError = &responseError
 		v.StatusId = model.VinStatuses.SendError
@@ -128,4 +151,24 @@ func (s *VinCloudService) saveError(vin *model.Vin, response *string, err error)
 		return saveErr
 	}
 	return err
+}
+
+func (s *VinCloudService) getClouCar(r *responseCloud) *cloudCar {
+	c := &cloudCar{}
+	if r.Response[0].Vin != "" {
+		c.Vin = &r.Response[0].Vin
+	}
+	if r.Response[0].Body != "" {
+		c.Body = &r.Response[0].Body
+	}
+	if r.Response[0].Year != 0 {
+		c.Year = &r.Response[0].Year
+	}
+	if r.Response[0].Mark != "" {
+		c.Mark = &r.Response[0].Model
+	}
+	if r.Response[0].Model != "" {
+		c.Model = &r.Response[0].Model
+	}
+	return c
 }

@@ -151,9 +151,9 @@ func (s *VinService) findVin(vin *model.Vin) error {
 	c := helper.HttpClient()
 	// TODO: удалить vinSourse
 	// всегда вызывать s.vinCloud.Find
-	// дополнить s.vinCloud.Find поиском марки и модели из name и name_synonyms
-	// если не нашлась марка и модель, но получен вин - вызывать s.vinAutocode.find
-	// сверять марку и модель и дополнять name_synonyms при каждом обращении к этим полям (name тоже должна быть в name_synonyms)
+	// готово: дополнить s.vinCloud.Find поиском марки и модели из name и name_synonyms
+	// если vin.isStatusError или не получен Вин или не нашлась марка и модель - вызывать s.vinAutocode.find
+	// сверять марку и модель и дополнять name_synonyms из response_cloud (name тоже должна быть в name_synonyms)
 	switch vinSourse {
 	case "cloud":
 		err := s.vinCloud.Find(c, vin)

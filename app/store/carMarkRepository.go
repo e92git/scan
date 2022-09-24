@@ -22,6 +22,12 @@ func (r *CarMarkRepository) FirstOrCreate(m *model.CarMark) error {
 	return res.Error
 }
 
+// FindByName ...
+func (r *CarMarkRepository) FindByName(m *model.CarMark, name string) error {
+	res := r.store.db.Where("name = ? OR ? MEMBER OF (name_synonyms)", name, name).First(&m)
+	return res.Error
+}
+
 // ImportFromTires - import всех марок из tires в car_marks.name_in_tires.
 // param clear - очистить все car_marks.name_in_tires и получить заново
 func (r *CarMarkRepository) ImportFromTires(clear bool) ([]string, error) {
