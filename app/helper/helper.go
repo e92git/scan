@@ -25,6 +25,9 @@ func ClearPlate(plate string) string {
 }
 
 func InArray(arr *[]string, str string) bool {
+	if arr == nil {
+		return false
+	}
 	for _, a := range *arr {
 	   if a == str {
 		  return true
@@ -32,3 +35,10 @@ func InArray(arr *[]string, str string) bool {
 	}
 	return false
  }
+
+ // AddSlashes если тупит GORM
+func AddSlashes(s string) string {
+	s = strings.ReplaceAll(s, `\`, `\\`)
+	s = strings.ReplaceAll(s, `'`, `\'`)
+	return s
+}

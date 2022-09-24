@@ -16,7 +16,9 @@ type CarMark struct {
 
 func (m *CarMark) GetSynonyms() *[]string {
 	var s *[]string
-    _ = json.Unmarshal([]byte(*m.NameSynonyms), &s)
+	if m.NameSynonyms != nil {
+		_ = json.Unmarshal([]byte(*m.NameSynonyms), &s)
+	}
 	return s
 }
 

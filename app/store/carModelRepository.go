@@ -1,6 +1,7 @@
 package store
 
 import (
+	"scan/app/helper"
 	"scan/app/model"
 
 	"github.com/gookit/validate"
@@ -33,9 +34,20 @@ func (r *CarModelRepository) FirstOrCreate(m *model.CarModel) error {
 	return res.Error
 }
 
+// First ...
+func (r *CarModelRepository) First(m *model.CarModel) error {
+	v := validate.Struct(m)
+	if !v.Validate() {
+		return v.Errors
+	}
+
+	res := r.store.db.Where(model.CarModel{Name: m.Name, MarkId: m.MarkId}).First(m)
+	return res.Error
+}
+
 // FindByName ...
-func (r *CarModelRepository) FindByName(m *model.CarModel, name string) error {
-	res := r.store.db.Where("name = ? OR ? MEMBER OF (name_synonyms)", name, name).First(&m)
+func (r *CarModelRepository) FindByName(m *model.CarModel, markId int, name string) error {
+	res := r.store.db.Where("mark_id = ? AND (name = ? OR '"+helper.AddSlashes(name)+"' MEMBER OF (name_synonyms))", markId, name).First(&m)
 	return res.Error
 }
 

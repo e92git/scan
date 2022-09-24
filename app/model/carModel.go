@@ -17,7 +17,9 @@ type CarModel struct {
 
 func (m *CarModel) GetSynonyms() *[]string {
 	var s *[]string
-    _ = json.Unmarshal([]byte(*m.NameSynonyms), &s)
+	if m.NameSynonyms != nil {
+		_ = json.Unmarshal([]byte(*m.NameSynonyms), &s)
+	}
 	return s
 }
 
@@ -35,6 +37,9 @@ func (m *CarModel) AddSynonym(synonym string) bool {
 		synonyms = *s
 	}
 	synonyms = append(synonyms, synonym)
+	j, _ := json.Marshal(synonyms)
+	r := string(j)
+	m.NameSynonyms = &r
 
 	return true
 }
