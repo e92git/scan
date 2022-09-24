@@ -16,7 +16,7 @@ type VinService struct {
 	vinCloud    *VinCloudService
 }
 
-var vinSourse string = "cloud" // источник данных по умолчанию "autocode" | "cloud"
+var vinSourse string = "all" // источник данных по умолчанию "all" | "autocode" | "cloud"
 
 func NewVin(store *store.Store, vinAutocode *VinAutocodeService, vinCloud *VinCloudService) *VinService {
 	return &VinService{
@@ -149,26 +149,47 @@ func (s *VinService) firstOrCreateByPlate(plate string, authorUserId int64, imme
 // дополнить объект vin, с вин-кодом и др. данными (по грз vin.plate)
 func (s *VinService) findVin(vin *model.Vin) error {
 	c := helper.HttpClient()
-	// TODO: удалить vinSourse
-	// всегда вызывать s.vinCloud.Find
-	// дополнить s.vinCloud.Find поиском марки и модели из name и name_synonyms
-	// если не нашлась марка и модель, но получен вин - вызывать s.vinAutocode.find
-	// сверять марку и модель и дополнять name_synonyms при каждом обращении к этим полям (name тоже должна быть в name_synonyms)
+	// готово: TODO: удалить vinSourse
+	// готово: всегда вызывать s.vinCloud.Find
+	// готово: дополнить s.vinCloud.Find поиском марки и модели из name и name_synonyms
+	// готово: если vin.isStatusError или не получен Вин или не нашлась марка и модель - вызывать s.vinAutocode.find
+	// готово: сверять марку и модель и дополнять name_synonyms из response_cloud (name тоже должна быть в name_synonyms)
 	switch vinSourse {
 	case "cloud":
-		err := s.vinCloud.Find(c, vin)
+		return s.vinCloud.Find(c, vin)
+	case "autocode":
+		return s.vinAutocode.Find(c, vin)
+	case "all":
+		errCloud := s.vinCloud.Find(c, vin)
+		vinAutocode := *vin
+		if errCloud != nil || vin.IsErrorStatus() || vin.IsEmptyVin() || vin.IsEmptyCar() {
+			errAutocode := s.vinAutocode.Find(c, &vinAutocode)
+			if errAutocode != nil {
+				return errAutocode
+			}
+		}
+		vin, err := s.ChooseVin(vin, &vinAutocode)
 		if err != nil {
 			return err
 		}
-		return nil
-	case "autocode":
-		err := s.vinAutocode.Find(c, vin)
+		err = s.vinCloud.updateSynonyms(vin)
 		if err != nil {
 			return err
 		}
 		return nil
 	}
 	return errors.New("Undefined source")
+}
+
+// ChooseVin - Если vinAutocode не нашел вин, а vinCloud нашел, то перезаписать на vinCloud
+func (s *VinService) ChooseVin(vinCloud *model.Vin, vinAutocode *model.Vin) (*model.Vin, error) {
+	vin := vinAutocode
+	if vinCloud.IsSuccessStatus() && !vinAutocode.IsSuccessStatus() {
+		vin := vinCloud
+		vin.Response = vinAutocode.Response
+		return vin, s.store.Vin().Save(vin)
+	}
+	return vin, nil
 }
 
 // loadRelatives подгрузить Author и Status зависимости, если их нет или они не актуальные

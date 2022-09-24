@@ -1,6 +1,7 @@
 package store
 
 import (
+	"scan/app/helper"
 	"scan/app/model"
 
 	"github.com/gookit/validate"
@@ -11,6 +12,17 @@ type CarMarkRepository struct {
 	store *Store
 }
 
+// Save
+func (r *CarMarkRepository) Save(m *model.CarMark) error {
+	v := validate.Struct(m)
+	if !v.Validate() {
+		return v.Errors
+	}
+
+	res := r.store.db.Save(m)
+	return res.Error
+}
+
 // FirstOrCreate ...
 func (r *CarMarkRepository) FirstOrCreate(m *model.CarMark) error {
 	v := validate.Struct(m)
@@ -19,6 +31,23 @@ func (r *CarMarkRepository) FirstOrCreate(m *model.CarMark) error {
 	}
 
 	res := r.store.db.Where(model.CarMark{Name: m.Name}).FirstOrCreate(m)
+	return res.Error
+}
+
+// First ...
+func (r *CarMarkRepository) First(m *model.CarMark) error {
+	v := validate.Struct(m)
+	if !v.Validate() {
+		return v.Errors
+	}
+
+	res := r.store.db.Where(model.CarMark{Name: m.Name}).First(m)
+	return res.Error
+}
+
+// FindByName ...
+func (r *CarMarkRepository) FindByName(m *model.CarMark, name string) error {
+	res := r.store.db.Where("name = ? OR '"+helper.AddSlashes(name)+"' MEMBER OF (name_synonyms)", name).First(&m)
 	return res.Error
 }
 
