@@ -119,7 +119,7 @@ func (s *VinService) FindDeffered(count int) error {
 
 // CronFindDeffered найти отложенные поиски по госномеру (status_id=5)
 func (s *VinService) CronFindDeffered() {
-	var count = 100 // количесто штук за раз (12 в минуту)
+	var count = 90 // количесто штук за раз (30 в минуту)
 	err := s.FindDeffered(count)
 	if err != nil {
 		log.Println("CronError: CronFindDeffered" + err.Error())

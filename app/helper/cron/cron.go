@@ -21,8 +21,8 @@ func CronStart( conf *apiserver.Config, s *service.Config) {
 	}
     // инициализируем объект планировщика
     cron = gocron.NewScheduler(time.UTC)
-    // добавляем одну задачу каждые 5 мин
-    cron.Every(5).Minute().Do(s.Vin().CronFindDeffered)
+    // добавляем одну задачу каждые 3 мин
+    cron.Every(3).Minute().Do(s.Vin().CronFindDeffered)
     // запускаем планировщик в фоне
     cron.StartAsync()
 }
