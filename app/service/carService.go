@@ -15,6 +15,14 @@ func NewCar(store *store.Store) *CarService {
 	}
 }
 
+func (s *CarService) SaveMark(m *model.CarMark) error {
+	return s.store.CarMark().Save(m)
+}
+
+func (s *CarService) SaveModel(m *model.CarModel) error {
+	return s.store.CarModel().Save(m)
+}
+
 func (s *CarService) FirstOrCreateMark(name string) (*model.CarMark, error) {
 	new := &model.CarMark{
 		Name: name,

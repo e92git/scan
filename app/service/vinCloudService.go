@@ -80,16 +80,16 @@ type responseCloud struct {
 }
 
 type cloudCar struct {
-	Vin   *string
-	Body  *string
-	Mark  *string
-	Model *string
-	Year  *int
+	Vin       *string
+	Body      *string
+	MarkName  *string
+	ModelName *string
+	Year      *int
 }
 
 // saveSuccess распарсить ответ r, занести в vin, сохранить vin в бд
 func (s *VinCloudService) saveSuccess(v *model.Vin, r *responseCloud) error {
-	c := s.getClouCar(r)
+	c := s.getCloudCar(r)
 	v.Vin = c.Vin
 	v.Year = c.Year
 	v.StatusId = model.VinStatuses.Success
@@ -100,8 +100,8 @@ func (s *VinCloudService) saveSuccess(v *model.Vin, r *responseCloud) error {
 		v.Body = c.Body
 	}
 	// find mark
-	if c.Mark != nil {
-		carMark, err := s.carService.FirstMarkByName(*c.Mark)
+	if c.MarkName != nil {
+		carMark, err := s.carService.FirstMarkByName(*c.MarkName)
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return err
 		}
@@ -112,8 +112,8 @@ func (s *VinCloudService) saveSuccess(v *model.Vin, r *responseCloud) error {
 
 	}
 	// find model
-	if c.Model != nil {
-		carModel, err := s.carService.FirstModelByName(*c.Model)
+	if c.ModelName != nil {
+		carModel, err := s.carService.FirstModelByName(*c.ModelName)
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return err
 		}
@@ -153,7 +153,7 @@ func (s *VinCloudService) saveError(vin *model.Vin, response *string, err error)
 	return err
 }
 
-func (s *VinCloudService) getClouCar(r *responseCloud) *cloudCar {
+func (s *VinCloudService) getCloudCar(r *responseCloud) *cloudCar {
 	c := &cloudCar{}
 	if r.Response[0].Vin != "" {
 		c.Vin = &r.Response[0].Vin
@@ -165,10 +165,43 @@ func (s *VinCloudService) getClouCar(r *responseCloud) *cloudCar {
 		c.Year = &r.Response[0].Year
 	}
 	if r.Response[0].Mark != "" {
-		c.Mark = &r.Response[0].Model
+		c.MarkName = &r.Response[0].Model
 	}
 	if r.Response[0].Model != "" {
-		c.Model = &r.Response[0].Model
+		c.ModelName = &r.Response[0].Model
 	}
 	return c
+}
+
+// getCloudCarByVin получи данные из vin.ResponseCloud в виде структуры cloudCar
+func (s *VinCloudService) getCloudCarByVin(vin *model.Vin) (*cloudCar, error) {
+	if vin.ResponseCloud == nil {
+		return &cloudCar{}, nil
+	}
+	r := &responseCloud{}
+	err := json.Unmarshal([]byte(*vin.ResponseCloud), r)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.getCloudCar(r), nil
+}
+
+// updateSynonyms 
+// Добавить в поле `car_marks.name_synonyms` синоним марки из `vins.response_cloud``.
+// При условии, что такого синонима марки еще нет там (с учетом регистра).
+// Тоже самое и с моделью (`car_models.name_synonyms``)
+func (s *VinCloudService) updateSynonyms(vin *model.Vin) error {
+	cloudCar, err := s.getCloudCarByVin(vin)
+	if err != nil {
+		return err
+	}	
+
+	if cloudCar.MarkName != nil && vin.Mark != nil && vin.Mark.AddSynonym(*cloudCar.MarkName) {
+		s.carService.SaveMark(vin.Mark)
+	}
+	if cloudCar.ModelName != nil && vin.Model != nil && vin.Model.AddSynonym(*cloudCar.ModelName) {
+		s.carService.SaveModel(vin.Model)
+	}
+	return nil
 }

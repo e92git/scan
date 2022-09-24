@@ -61,3 +61,11 @@ func (s *Vin) IsSuccessStatus() bool {
 func (s *Vin) IsErrorStatus() bool {
 	return s.StatusId == VinStatuses.SendError
 }
+
+func (s *Vin) IsEmptyVin() bool {
+	return s.Vin == nil && s.Vin2 == nil && s.Body == nil
+}
+
+func (s *Vin) IsEmptyCar() bool {
+	return s.MarkId == nil || s.ModelId == nil || s.Year == nil
+}

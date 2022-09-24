@@ -11,6 +11,17 @@ type CarModelRepository struct {
 	store *Store
 }
 
+// Save
+func (r *CarModelRepository) Save(m *model.CarModel) error {
+	v := validate.Struct(m)
+	if !v.Validate() {
+		return v.Errors
+	}
+
+	res := r.store.db.Save(m)
+	return res.Error
+}
+
 // FirstOrCreate ...
 func (r *CarModelRepository) FirstOrCreate(m *model.CarModel) error {
 	v := validate.Struct(m)
