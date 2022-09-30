@@ -54,6 +54,14 @@ stdout_logfile=/var/log/supervisor/scan.log
 -NGINX:
 service nginx restart
 
+-Import CSV через phpMyAdmin-
+Переход в раздел импорт талицы scan (только не Scan! там обработка грз идет в англ язык).
+Разделитель полей ; Значения полей обрамлены (пусто) Символ экранирования (пусто)
+В поле "Названия столбцов" вписать
+plate,scanned_at,location_id,user_id,created_at
+В этом же порядке в CSV должны быть столбцы, например
+M435KO42;2022-09-17 11:18:01;3;1;2022-09-30 19:49:12.000
+
 -Запросы-
 Запрос всех авто, которых видели чаще 1 дня:
 SELECT plate, day, COUNT(*) as count_in_month

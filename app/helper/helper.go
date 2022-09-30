@@ -1,6 +1,8 @@
 package helper
 
 import (
+	"encoding/csv"
+	"net/http"
 	"regexp"
 	"strings"
 	"time"
@@ -41,4 +43,21 @@ func AddSlashes(s string) string {
 	s = strings.ReplaceAll(s, `\`, `\\`)
 	s = strings.ReplaceAll(s, `'`, `\'`)
 	return s
+}
+
+func ReadCSVFromUrl(url string) ([][]string, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	reader := csv.NewReader(resp.Body)
+	reader.Comma = ';'
+	data, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }

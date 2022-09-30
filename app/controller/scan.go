@@ -14,7 +14,7 @@ type AddScanRequest struct {
 
 // AddScan godoc
 // @Summary      Добавить отсканированный номер
-// @Description  Ести метод вызвать 2 раза, то он вставит указанный номер 2 раза 
+// @Description  Ести метод вызвать 2 раза, то он вставит указанный номер 2 раза
 // @Tags         Сканирование
 // @Accept       json
 // @Produce      json
@@ -47,7 +47,7 @@ type AddScanBulkRequest struct {
 
 // AddScan godoc
 // @Summary      Добавить отсканированные номера пачкой
-// @Description  Ести метод вызвать 2 раза, то он вставит указанный номер 2 раза 
+// @Description  Ести метод вызвать 2 раза, то он вставит указанный номер 2 раза. Максимум 10000 номеров за раз.
 // @Tags         Сканирование
 // @Accept       json
 // @Produce      json
