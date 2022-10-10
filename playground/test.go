@@ -62,6 +62,11 @@ func New(cmp func(int, int) int) int {
 	// return &Tree(E){compare: cmp}
 }
 
+type FooI interface {
+	hello() bool
+	get() int
+}
+
 // Generics
 type Int interface {
 	~int | ~int32 | ~int64 | ~string
@@ -73,6 +78,12 @@ func Max[T Int](a T, b T) T {
 	}
 
 	return b
+}
+func Max2(a FooI, b FooI) int {
+	if a.hello() {
+		return a.get()
+	}
+	return 0
 }
 
 type myMap[K comparable, V any] map[K]V

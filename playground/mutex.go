@@ -5,7 +5,7 @@ import (
 )
  
 var counter int = 0             //  общий ресурс
-func main() {
+func main3() {
  
     ch := make(chan bool)       // канал
     var mutex sync.Mutex        // определяем мьютекс

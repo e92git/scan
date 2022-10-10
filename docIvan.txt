@@ -68,6 +68,7 @@ SELECT plate, day, COUNT(*) as count_in_month
 FROM (
   SELECT plate, DATE(scanned_at) as day, COUNT(*) as count_in_day
   FROM `scans`
+  WHERE location_id = 3
   GROUP BY plate, day
   ORDER BY count_in_day DESC
 ) as ss
